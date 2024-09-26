@@ -6,9 +6,134 @@
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \f0\fs24 \cf0 <!DOCTYPE html>\
-<html>\
+<html lang="en">\
+<head>\
+    <meta charset="UTF-8">\
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">\
+    <title>SnowClear Pro - Your Local Snow Removal Experts</title>\
+    <style>\
+        body \{\
+            margin: 0;\
+            font-family: Arial, sans-serif;\
+            background-color: #f0f4f7;\
+            color: #333;\
+            text-align: center;\
+        \}\
+\
+        header \{\
+            background-color: #3a5a97;\
+            padding: 20px;\
+        \}\
+\
+        header img \{\
+            max-width: 150px;\
+        \}\
+\
+        h1 \{\
+            font-size: 3rem;\
+            color: #fff;\
+            margin: 0;\
+        \}\
+\
+        .container \{\
+            padding: 40px;\
+        \}\
+\
+        .intro \{\
+            font-size: 1.2rem;\
+            margin-bottom: 30px;\
+        \}\
+\
+        .pictures \{\
+            display: flex;\
+            justify-content: center;\
+            gap: 20px;\
+            margin-bottom: 40px;\
+        \}\
+\
+        .pictures img \{\
+            width: 300px;\
+            height: 200px;\
+            object-fit: cover;\
+            border-radius: 10px;\
+        \}\
+\
+        .cta-button \{\
+            background-color: #3a5a97;\
+            color: white;\
+            padding: 15px 30px;\
+            border: none;\
+            border-radius: 5px;\
+            font-size: 1.5rem;\
+            cursor: pointer;\
+            transition: background-color 0.3s ease;\
+        \}\
+\
+        .cta-button:hover \{\
+            background-color: #2e4781;\
+        \}\
+\
+        footer \{\
+            background-color: #333;\
+            color: white;\
+            padding: 10px;\
+            margin-top: 40px;\
+        \}\
+\
+        .game-link \{\
+            display: none;\
+        \}\
+    </style>\
+</head>\
 <body>\
-<h1>This isn\'92t my main gig. It\'92s my side gig and I can\'92t get a hold of this from either end. I\'92m a dead man walking. All I eat are burgers because that\'92s all I can afford.</h1>\
-<p>The microwaveable ones from the dollar store.</p>\
+\
+    <!-- Header with logo -->\
+    <header>\
+        <img src="logo-placeholder.png" alt="SnowClear Pro Logo">\
+        <h1>SnowClear Pro</h1>\
+    </header>\
+\
+    <div class="container">\
+        <!-- Introductory text -->\
+        <p class="intro">\
+            Trusted snow removal service to keep your driveways and walkways clear all winter long.\
+        </p>\
+\
+        <!-- Image gallery -->\
+        <div class="pictures">\
+            <img src="image-placeholder1.jpg" alt="Snow Removal Service Image 1">\
+            <img src="image-placeholder2.jpg" alt="Snow Removal Service Image 2">\
+            <img src="image-placeholder3.jpg" alt="Snow Removal Service Image 3">\
+        </div>\
+\
+        <!-- Call to action button -->\
+        <button class="cta-button" id="bookNowButton">Book Now</button>\
+\
+        <!-- Hidden link to the game -->\
+        <div id="gamePrompt">\
+            <p>Oops! We're currently experiencing technical issues with our booking system.</p>\
+            <p>But, you can play a fun game while you wait! Click below to fly a Cesna airplane through obstacles like a pro.</p>\
+            <a href="flappy-cesna-game.html" class="cta-button">Play the Game</a>\
+        </div>\
+    </div>\
+\
+    <!-- Footer -->\
+    <footer>\
+        <p>\'a9 2024 SnowClear Pro. All rights reserved.</p>\
+    </footer>\
+\
+    <script>\
+        // JavaScript to handle "Book Now" button click\
+        const bookNowButton = document.getElementById('bookNowButton');\
+        const gamePrompt = document.getElementById('gamePrompt');\
+\
+        bookNowButton.addEventListener('click', function() \{\
+            alert('Oops! Our booking system is down. Why not play a game instead?');\
+            gamePrompt.style.display = 'block'; // Show the game prompt\
+            bookNowButton.style.display = 'none'; // Hide the book now button\
+        \});\
+    </script>\
+\
 </body>\
-</html>}
+</html>\
+}
