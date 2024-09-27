@@ -10,15 +10,18 @@ let cessna = {
   y: 150, 
   width: 60,  
   height: 40, 
-  gravity: 0.5, 
-  lift: -9, 
+  gravity: 0.3, 
+  lift: -5, 
   velocity: 0 
 };
 
 let pipes = [];
 let frame = 0;
 let score = 0;
-let pipeGap = 200;  // Starting gap between pipes
+
+// Define the initial pipe gap and minimum pipe gap (twice the Cessna's height)
+let pipeGap = 250;  // Initial gap between pipes
+const minPipeGap = cessna.height * 2;  // Minimum gap is 2 times Cessna's height
 
 // Add event listener for mouse click
 canvas.addEventListener('mousedown', function() {
@@ -39,7 +42,8 @@ function update() {
 
   // Generate pipes at intervals
   if (frame % 90 === 0) {
-    let pipeHeight = Math.random() * (canvas.height / 2) + 50; // Random initial pipe height
+    // Fixed pipe height: starts low at the bottom of the canvas
+    let pipeHeight = 100;  // The height of the bottom pipe
     pipes.push({ 
       x: canvas.width, 
       y: pipeHeight, 
@@ -51,10 +55,11 @@ function update() {
   pipes.forEach((pipe, index) => {
     pipe.x -= 2;
 
-    // Increase the pipe size and decrease the gap as the score increases
-    if (score > 5) {  // After score of 5, increase the challenge
-      pipe.height += 0.1 * score;  // Make the pipes taller as score increases
-      pipeGap -= 0.1 * score;      // Gradually decrease the gap size
+    // Gradually shrink the pipe gap, but stop when it reaches 2 times Cessna's height
+    if (pipeGap > minPipeGap) {
+      pipeGap -= 0.1;  // Gradually decrease the gap
+    } else {
+      pipeGap = minPipeGap;  // Stop shrinking the gap when it reaches the minimum size
     }
 
     if (pipe.x + pipe.width < 0) {
@@ -85,7 +90,7 @@ function resetGame() {
   pipes = [];
   score = 0;
   frame = 0;
-  pipeGap = 200;  // Reset gap size
+  pipeGap = 250;  // Reset the gap size to its initial value
 }
 
 function render() {
