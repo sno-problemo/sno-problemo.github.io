@@ -8,21 +8,21 @@ cessnaImg.src = 'cessna.png';  // Add the Cessna airplane image here
 let cessna = { 
   x: 50, 
   y: 150, 
-  width: 60,  // Adjust size based on airplane image
-  height: 40, // Adjust size based on airplane image
-  gravity: 0.6, 
-  lift: -1, 
+  width: 60,  
+  height: 40, 
+  gravity: 0.3, 
+  lift: -5, 
   velocity: 0 
 };
 
 let pipes = [];
 let frame = 0;
 let score = 0;
+let pipeGap = 200;  // Starting gap between pipes
 
-document.addEventListener('keydown', function(e) {
-  if (e.code === 'Space') {
-    cessna.velocity = cessna.lift;  // Control Cessna like the bird
-  }
+// Add event listener for mouse click
+canvas.addEventListener('mousedown', function() {
+  cessna.velocity = cessna.lift;  // Make the Cessna fly upwards when mouse is clicked
 });
 
 function update() {
@@ -32,16 +32,24 @@ function update() {
 
   // Generate pipes at intervals
   if (frame % 90 === 0) {
+    let pipeHeight = Math.random() * (canvas.height / 2) + 50; // Random initial pipe height
     pipes.push({ 
       x: canvas.width, 
-      y: Math.random() * canvas.height / 2 + 50, 
+      y: pipeHeight, 
       width: 50, 
-      height: 200 
+      height: pipeHeight 
     });
   }
 
   pipes.forEach((pipe, index) => {
     pipe.x -= 2;
+
+    // Increase the pipe size and decrease the gap as the score increases
+    if (score > 5) {  // After score of 5, increase the challenge
+      pipe.height += 0.1 * score;  // Make the pipes taller as score increases
+      pipeGap -= 0.1 * score;      // Gradually decrease the gap size
+    }
+
     if (pipe.x + pipe.width < 0) {
       pipes.splice(index, 1);
       score++;
@@ -51,7 +59,7 @@ function update() {
   // Check for collisions
   pipes.forEach(pipe => {
     if (cessna.x < pipe.x + pipe.width && cessna.x + cessna.width > pipe.x &&
-        (cessna.y < pipe.y || cessna.y + cessna.height > pipe.y + pipe.height)) {
+        (cessna.y < pipe.y || cessna.y + cessna.height > pipe.y + pipeGap)) {
       resetGame();
     }
   });
@@ -70,6 +78,7 @@ function resetGame() {
   pipes = [];
   score = 0;
   frame = 0;
+  pipeGap = 200;  // Reset gap size
 }
 
 function render() {
@@ -81,7 +90,7 @@ function render() {
   // Draw pipes
   pipes.forEach(pipe => {
     ctx.fillRect(pipe.x, 0, pipe.width, pipe.y);
-    ctx.fillRect(pipe.x, pipe.y + pipe.height, pipe.width, canvas.height - pipe.y - pipe.height);
+    ctx.fillRect(pipe.x, pipe.y + pipeGap, pipe.width, canvas.height - pipe.y - pipeGap);
   });
 
   // Draw score
