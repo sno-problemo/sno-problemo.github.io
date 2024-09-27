@@ -10,8 +10,8 @@ let cessna = {
   y: 150, 
   width: 60,  
   height: 40, 
-  gravity: 0.3, 
-  lift: -5, 
+  gravity: 0.5, 
+  lift: -9, 
   velocity: 0 
 };
 
