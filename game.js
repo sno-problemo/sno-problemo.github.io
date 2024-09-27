@@ -11,7 +11,7 @@ let cessna = {
   width: 60,  // Adjust size based on airplane image
   height: 40, // Adjust size based on airplane image
   gravity: 0.6, 
-  lift: -15, 
+  lift: -5, 
   velocity: 0 
 };
 
