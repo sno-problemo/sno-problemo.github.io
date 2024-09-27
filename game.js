@@ -25,6 +25,13 @@ canvas.addEventListener('mousedown', function() {
   cessna.velocity = cessna.lift;  // Make the Cessna fly upwards when mouse is clicked
 });
 
+// Add event listener for spacebar
+document.addEventListener('keydown', function(event) {
+  if (event.code === 'Space') {  // Check if spacebar is pressed
+    cessna.velocity = cessna.lift;  // Make the Cessna fly upwards when spacebar is pressed
+  }
+});
+
 function update() {
   // Gravity effect
   cessna.velocity += cessna.gravity;
