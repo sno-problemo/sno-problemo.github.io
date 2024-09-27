@@ -4,9 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sno Problemo - Snow Removal Services</title>
+    <style>
+        .cta-button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .cta-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-    <h1>Sno Problemo Logo will go here. It will be a guy in a karate suit on a snow board. He's going to look really cool.</h1>
+    <h1>Sno Problemo Logo</h1>
     <h2>Sno Problemo</h2>
     <p>Trusted snow removal service to keep your driveways and walkways clear all winter long.</p>
 
@@ -18,11 +32,12 @@
 
     <button>Book Now</button>
 
-    <p>Oops! We're currently experiencing technical issues with our booking system. (this error will pop up after the Book Now button is pressed)</p>
-
-    <p>But, you can play a fun game while you wait! Click below to fly a Cessna airplane!</p>
-
-    <button>Play the Game</button>
+    <!-- Hidden link to the game -->
+    <div id="gamePrompt">
+        <p>Oops! We're currently experiencing technical issues with our booking system.</p>
+        <p>But, you can play a fun game while you wait! Click below to fly a Cessna!</p>
+        <a href="cessna.html" class="cta-button">Play the Game</a>
+    </div>
 
     <footer>
         <p>&copy; 2024 Sno Problemo. All rights reserved.</p>
