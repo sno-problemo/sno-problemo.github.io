@@ -4,82 +4,64 @@ let canTakeOff = false, hasTakenOff = false;
 const maxSpeed = 1;
 const takeoffSpeed = 0.2;
 
-// Check if Three.js is loaded
-if (typeof THREE === 'undefined') {
-    console.error('Three.js is not loaded. Please include the Three.js library.');
-    alert('Three.js is not loaded. Please check the console for more information.');
-} else {
-    init();
-}
+// Initialize the scene
+init();
 
 function init() {
-    try {
-        scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x87CEEB); // Sky blue background
+    // Scene setup
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x87CEEB); // Sky blue background
 
-        const width = window.innerWidth;
-        const height = window.innerHeight;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
 
-        camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-        camera.position.set(0, 5, 20);
+    camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+    camera.position.set(0, 5, 20);
 
-        renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(width, height);
-        document.body.appendChild(renderer.domElement);
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    document.body.appendChild(renderer.domElement);
 
-        // Updated lighting
-        const ambientLight = new THREE.AmbientLight(0xffffff, 1); // Increased light intensity
-        scene.add(ambientLight);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+    scene.add(ambientLight);
 
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 2); // Increased directional light intensity
-        directionalLight.position.set(10, 10, 10);
-        scene.add(directionalLight);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(10, 10, 10);
+    scene.add(directionalLight);
 
-        loadPlaneModel(); // Load the Cessna model (or a placeholder)
+    loadPlaneModel();
 
-        terrain = createTerrain(); // Create the terrain
-        scene.add(terrain);
+    terrain = createTerrain();
+    scene.add(terrain);
 
-        runway = createRunway(); // Create a simple runway
-        scene.add(runway);
+    runway = createRunway();
+    scene.add(runway);
 
-        createOnScreenControls();
+    createOnScreenControls();
 
-        window.addEventListener('resize', onWindowResize, false);
-        document.addEventListener('keydown', handleKeyDown);
-        document.addEventListener('keyup', handleKeyUp);
+    window.addEventListener('resize', onWindowResize, false);
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('keyup', handleKeyUp);
 
-        animate(); // Start animation immediately
-    } catch (error) {
-        console.error('Error during initialization:', error);
-        alert('An error occurred during initialization. Please check the console for more information.');
-    }
+    animate();
 }
 
 function loadPlaneModel() {
+    // Load Cessna model using GLTFLoader (ensure the model path is correct)
     const loader = new THREE.GLTFLoader();
     loader.load(
-        'main/Assets/Plane/cessna-172-2.glb',
+        'Assets/Plane/cessna-172-2.glb',
         function (gltf) {
             plane = gltf.scene;
             plane.position.set(0, 0.1, 0);
-            plane.scale.set(0.01, 0.01, 0.01);
-            plane.rotation.set(0, Math.PI, 0); // Ensure correct rotation
+            plane.scale.set(0.01, 0.01, 0.01); // Adjust scale as needed
+            plane.rotation.y = Math.PI; // Correct rotation
             scene.add(plane);
             console.log('Cessna 172 model loaded successfully');
         },
-        function (xhr) {
-            console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-        },
+        undefined,
         function (error) {
-            console.error('An error occurred while loading the model. Using placeholder box.', error);
-
-            // Fallback placeholder box if the plane model fails
-            const geometry = new THREE.BoxGeometry(1, 0.5, 1.5);  // A simple rectangular shape for a plane-like object
-            const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-            plane = new THREE.Mesh(geometry, material);
-            plane.position.set(0, 0.1, 0);
-            scene.add(plane);
+            console.error('An error occurred while loading the model:', error);
         }
     );
 }
@@ -88,15 +70,21 @@ function createTerrain() {
     const terrainGeometry = new THREE.PlaneGeometry(1000, 1000, 100, 100);
     terrainGeometry.rotateX(-Math.PI / 2);
 
-    const vertices = terrainGeometry.attributes.position.array;
-    for (let i = 2; i < vertices.length; i += 3) {
-        vertices[i] = Math.sin(vertices[i - 2] / 10) * Math.cos(vertices[i - 1] / 10) * 5;
-    }
+    // Load textures for Grass and Rock
+    const textureLoader = new THREE.TextureLoader();
+    const grassTexture = textureLoader.load('Assets/Terrain/grass.jpg'); // Ensure this path is correct
+    const rockTexture = textureLoader.load('Assets/Terrain/rock.jpg');   // Ensure this path is correct
 
-    terrainGeometry.computeVertexNormals();
+    // Set texture repeat for large ground
+    grassTexture.wrapS = grassTexture.wrapT = THREE.RepeatWrapping;
+    grassTexture.repeat.set(50, 50);
 
-    // Updated terrain material
-    const terrainMaterial = new THREE.MeshLambertMaterial({ color: 0x3a9d23 });
+    rockTexture.wrapS = rockTexture.wrapT = THREE.RepeatWrapping;
+    rockTexture.repeat.set(50, 50);
+
+    // Create the material using Grass texture
+    const terrainMaterial = new THREE.MeshPhongMaterial({ map: grassTexture });
+
     const terrainMesh = new THREE.Mesh(terrainGeometry, terrainMaterial);
     terrainMesh.position.y = -0.1;
 
@@ -141,34 +129,30 @@ function createOnScreenControls() {
 function animate() {
     requestAnimationFrame(animate);
 
-    try {
-        if (plane) {
-            if (!hasTakenOff) {
-                if (canTakeOff && speed < takeoffSpeed) {
-                    speed += 0.001;
-                }
-                plane.translateZ(-speed);
-
-                if (speed >= takeoffSpeed) {
-                    hasTakenOff = true;
-                }
-            } else {
-                plane.translateZ(-speed);
-                altitude += 0.01;
-                plane.position.y = altitude;
+    if (plane) {
+        if (!hasTakenOff) {
+            if (canTakeOff && speed < takeoffSpeed) {
+                speed += 0.001;
             }
+            plane.translateZ(-speed);
 
-            camera.position.set(plane.position.x, plane.position.y + 5, plane.position.z + 20);
-            camera.lookAt(plane.position);
+            if (speed >= takeoffSpeed) {
+                hasTakenOff = true;
+            }
+        } else {
+            plane.translateZ(-speed);
+            altitude += 0.01;
+            plane.position.y = altitude;
         }
 
-        document.getElementById('speed').textContent = speed.toFixed(2);
-        document.getElementById('altitude').textContent = altitude.toFixed(2);
-
-        renderer.render(scene, camera);
-    } catch (error) {
-        console.error('Error during animation:', error);
+        camera.position.set(plane.position.x, plane.position.y + 5, plane.position.z + 20);
+        camera.lookAt(plane.position);
     }
+
+    document.getElementById('speed').textContent = speed.toFixed(2);
+    document.getElementById('altitude').textContent = altitude.toFixed(2);
+
+    renderer.render(scene, camera);
 }
 
 function onWindowResize() {
