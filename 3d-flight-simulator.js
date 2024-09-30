@@ -50,7 +50,7 @@ function loadPlaneModel() {
     // Load Cessna model using GLTFLoader (ensure the model path is correct)
     const loader = new THREE.GLTFLoader();
     loader.load(
-        'Assets/Plane/cessna-172-2.glb',
+        'https://github.com/sno-problemo/sno-problemo.github.io/Assets/Plane/cessna-172-2.glb',
         function (gltf) {
             plane = gltf.scene;
             plane.position.set(0, 0.1, 0);
@@ -72,8 +72,8 @@ function createTerrain() {
 
     // Load textures for Grass and Rock
     const textureLoader = new THREE.TextureLoader();
-    const grassTexture = textureLoader.load('Assets/Terrain/grass.jpg'); // Ensure this path is correct
-    const rockTexture = textureLoader.load('Assets/Terrain/rock.jpg');   // Ensure this path is correct
+    const grassTexture = textureLoader.load('https://github.com/sno-problemo/sno-problemo.github.io/Assets/Terrain/grass.jpg'); // Ensure this path is correct
+    const rockTexture = textureLoader.load('https://github.com/sno-problemo/sno-problemo.github.io/Assets/Terrain/rock.jpg');   // Ensure this path is correct
 
     // Set texture repeat for large ground
     grassTexture.wrapS = grassTexture.wrapT = THREE.RepeatWrapping;
