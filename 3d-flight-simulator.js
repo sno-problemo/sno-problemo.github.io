@@ -24,6 +24,11 @@ function init() {
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
     scene.add(ambientLight);
 
+    // Directional light to simulate sunlight
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(10, 10, 10);
+    scene.add(directionalLight);
+
     // Load realistic Cessna 3D model
     loadCessnaModel();
 
@@ -111,6 +116,8 @@ function loadCessnaModel() {
     gltfLoader.load('path/to/cessna-model.glb', (gltf) => {
         plane = gltf.scene;
         plane.position.set(0, 0.2, 0);
+        plane.rotation.set(0, Math.PI, 0); // Correct orientation
+        plane.scale.set(0.5, 0.5, 0.5);    // Scale down
         scene.add(plane);
     }, undefined, (error) => {
         console.error('An error occurred while loading the model:', error);
@@ -133,10 +140,15 @@ function createTexturedTerrain() {
     const simplex = new SimplexNoise();
     const vertices = terrainGeometry.attributes.position.array;
     for (let i = 0; i < vertices.length; i += 3) {
-        vertices[i + 2] = simplex.noise2D(vertices[i], vertices[i + 1]) * 5;
+        vertices[i + 2] = simplex.noise2D(vertices[i], vertices[i + 1]) * 10; // Random height
     }
 
+    terrainGeometry.attributes.position.needsUpdate = true;
+
     const grassTexture = textureLoader.load('path/to/grass-texture.jpg');
+    grassTexture.wrapS = grassTexture.wrapT = THREE.RepeatWrapping; 
+    grassTexture.repeat.set(100, 100);
+
     const terrainMaterial = new THREE.MeshLambertMaterial({ map: grassTexture });
     const terrainMesh = new THREE.Mesh(terrainGeometry, terrainMaterial);
     terrainMesh.position.y = -0.1;
