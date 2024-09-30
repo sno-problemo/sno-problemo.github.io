@@ -27,10 +27,11 @@ function init() {
         renderer.setSize(width, height);
         document.body.appendChild(renderer.domElement);
 
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        // Updated lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1); // Increased light intensity
         scene.add(ambientLight);
 
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 2); // Increased directional light intensity
         directionalLight.position.set(10, 10, 10);
         scene.add(directionalLight);
 
@@ -65,11 +66,6 @@ function init() {
 }
 
 function loadPlaneModel() {
-    if (typeof THREE.GLTFLoader === 'undefined') {
-        console.error('GLTFLoader is not available. Make sure you have included it in your project.');
-        return;
-    }
-
     const loader = new THREE.GLTFLoader();
     loader.load(
         'Assets/Plane/cessna-172-2.glb',
@@ -77,8 +73,12 @@ function loadPlaneModel() {
             plane = gltf.scene;
             plane.position.set(0, 0.1, 0);
             plane.scale.set(0.01, 0.01, 0.01);
-            plane.rotation.y = Math.PI;
+            plane.rotation.set(0, Math.PI, 0); // Ensure correct rotation
             scene.add(plane);
+
+            // Update camera position to follow plane
+            camera.position.set(0, 5, 20);
+            camera.lookAt(plane.position);  // Focus camera on the plane
             console.log('Cessna 172 model loaded successfully');
         },
         function (xhr) {
@@ -101,7 +101,8 @@ function createTerrain() {
 
     terrainGeometry.computeVertexNormals();
 
-    const terrainMaterial = new THREE.MeshPhongMaterial({ color: 0x3a9d23 });
+    // Updated terrain material
+    const terrainMaterial = new THREE.MeshLambertMaterial({ color: 0x3a9d23 });
     const terrainMesh = new THREE.Mesh(terrainGeometry, terrainMaterial);
     terrainMesh.position.y = -0.1;
 
