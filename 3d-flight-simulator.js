@@ -59,7 +59,7 @@ function init() {
 function loadPlaneModel() {
     const loader = new THREE.GLTFLoader();
     loader.load(
-        'Assets/Plane/cessna-172-2.glb',
+        'main/Assets/Plane/cessna-172-2.glb',
         function (gltf) {
             plane = gltf.scene;
             plane.position.set(0, 0.1, 0);
