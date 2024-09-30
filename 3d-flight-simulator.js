@@ -4,58 +4,82 @@ let canTakeOff = false, hasTakenOff = false;
 const maxSpeed = 1;
 const takeoffSpeed = 0.2;
 
-init();
+// Check if Three.js is loaded
+if (typeof THREE === 'undefined') {
+    console.error('Three.js is not loaded. Please include the Three.js library.');
+    alert('Three.js is not loaded. Please check the console for more information.');
+} else {
+    init();
+}
 
 function init() {
-    scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x87CEEB); // Sky blue background
+    try {
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x87CEEB); // Sky blue background
 
-    const width = window.innerWidth;
-    const height = window.innerHeight;
+        const width = window.innerWidth;
+        const height = window.innerHeight;
 
-    camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-    camera.position.set(0, 5, 20);
+        camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+        camera.position.set(0, 5, 20);
 
-    renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(width, height);
-    document.body.appendChild(renderer.domElement);
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(width, height);
+        document.body.appendChild(renderer.domElement);
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-    scene.add(ambientLight);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        scene.add(ambientLight);
 
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(10, 10, 10);
-    scene.add(directionalLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(10, 10, 10);
+        scene.add(directionalLight);
 
-    loadPlaneModel();
+        // Add a simple cube to test rendering
+        const geometry = new THREE.BoxGeometry(1, 1, 1);
+        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        const cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
 
-    terrain = createTerrain();
-    scene.add(terrain);
+        console.log('Basic scene setup complete');
 
-    runway = createRunway();
-    scene.add(runway);
+        loadPlaneModel();
 
-    createOnScreenControls();
+        terrain = createTerrain();
+        scene.add(terrain);
 
-    window.addEventListener('resize', onWindowResize, false);
-    document.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('keyup', handleKeyUp);
+        runway = createRunway();
+        scene.add(runway);
 
-    console.log('Initialization complete');
+        createOnScreenControls();
+
+        window.addEventListener('resize', onWindowResize, false);
+        document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('keyup', handleKeyUp);
+
+        console.log('Initialization complete');
+        animate(); // Start animation immediately
+    } catch (error) {
+        console.error('Error during initialization:', error);
+        alert('An error occurred during initialization. Please check the console for more information.');
+    }
 }
 
 function loadPlaneModel() {
+    if (typeof THREE.GLTFLoader === 'undefined') {
+        console.error('GLTFLoader is not available. Make sure you have included it in your project.');
+        return;
+    }
+
     const loader = new THREE.GLTFLoader();
     loader.load(
         'Assets/Plane/cessna-172-2.glb',
         function (gltf) {
             plane = gltf.scene;
-            plane.position.set(0, 0.1, 0); // Adjust the Y position to place it on the runway
-            plane.scale.set(0.01, 0.01, 0.01); // Adjust scale as needed
-            plane.rotation.y = Math.PI; // Rotate to face forward
+            plane.position.set(0, 0.1, 0);
+            plane.scale.set(0.01, 0.01, 0.01);
+            plane.rotation.y = Math.PI;
             scene.add(plane);
             console.log('Cessna 172 model loaded successfully');
-            animate(); // Start animation after the model is loaded
         },
         function (xhr) {
             console.log((xhr.loaded / xhr.total * 100) + '% loaded');
@@ -79,7 +103,7 @@ function createTerrain() {
 
     const terrainMaterial = new THREE.MeshPhongMaterial({ color: 0x3a9d23 });
     const terrainMesh = new THREE.Mesh(terrainGeometry, terrainMaterial);
-    terrainMesh.position.y = -0.1; // Adjust to be just below the runway
+    terrainMesh.position.y = -0.1;
 
     return terrainMesh;
 }
@@ -89,7 +113,7 @@ function createRunway() {
     const runwayMaterial = new THREE.MeshPhongMaterial({ color: 0x333333 });
     const runwayMesh = new THREE.Mesh(runwayGeometry, runwayMaterial);
     runwayMesh.rotation.x = -Math.PI / 2;
-    runwayMesh.position.y = 0; // At ground level
+    runwayMesh.position.y = 0;
     return runwayMesh;
 }
 
@@ -122,30 +146,34 @@ function createOnScreenControls() {
 function animate() {
     requestAnimationFrame(animate);
 
-    if (plane) {
-        if (!hasTakenOff) {
-            if (canTakeOff && speed < takeoffSpeed) {
-                speed += 0.001;
-            }
-            plane.translateZ(-speed);
+    try {
+        if (plane) {
+            if (!hasTakenOff) {
+                if (canTakeOff && speed < takeoffSpeed) {
+                    speed += 0.001;
+                }
+                plane.translateZ(-speed);
 
-            if (speed >= takeoffSpeed) {
-                hasTakenOff = true;
+                if (speed >= takeoffSpeed) {
+                    hasTakenOff = true;
+                }
+            } else {
+                plane.translateZ(-speed);
+                altitude += 0.01;
+                plane.position.y = altitude;
             }
-        } else {
-            plane.translateZ(-speed);
-            altitude += 0.01;
-            plane.position.y = altitude;
+
+            camera.position.set(plane.position.x, plane.position.y + 5, plane.position.z + 20);
+            camera.lookAt(plane.position);
         }
-
-        camera.position.set(plane.position.x, plane.position.y + 5, plane.position.z + 20);
-        camera.lookAt(plane.position);
 
         document.getElementById('speed').textContent = speed.toFixed(2);
         document.getElementById('altitude').textContent = altitude.toFixed(2);
-    }
 
-    renderer.render(scene, camera);
+        renderer.render(scene, camera);
+    } catch (error) {
+        console.error('Error during animation:', error);
+    }
 }
 
 function onWindowResize() {
