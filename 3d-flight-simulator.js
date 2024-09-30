@@ -35,20 +35,12 @@ function init() {
         directionalLight.position.set(10, 10, 10);
         scene.add(directionalLight);
 
-        // Add a simple cube to test rendering
-        const geometry = new THREE.BoxGeometry(1, 1, 1);
-        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-        const cube = new THREE.Mesh(geometry, material);
-        scene.add(cube);
+        loadPlaneModel(); // Load the Cessna model (or a placeholder)
 
-        console.log('Basic scene setup complete');
-
-        loadPlaneModel();
-
-        terrain = createTerrain();
+        terrain = createTerrain(); // Create the terrain
         scene.add(terrain);
 
-        runway = createRunway();
+        runway = createRunway(); // Create a simple runway
         scene.add(runway);
 
         createOnScreenControls();
@@ -57,7 +49,6 @@ function init() {
         document.addEventListener('keydown', handleKeyDown);
         document.addEventListener('keyup', handleKeyUp);
 
-        console.log('Initialization complete');
         animate(); // Start animation immediately
     } catch (error) {
         console.error('Error during initialization:', error);
@@ -75,17 +66,20 @@ function loadPlaneModel() {
             plane.scale.set(0.01, 0.01, 0.01);
             plane.rotation.set(0, Math.PI, 0); // Ensure correct rotation
             scene.add(plane);
-
-            // Update camera position to follow plane
-            camera.position.set(0, 5, 20);
-            camera.lookAt(plane.position);  // Focus camera on the plane
             console.log('Cessna 172 model loaded successfully');
         },
         function (xhr) {
             console.log((xhr.loaded / xhr.total * 100) + '% loaded');
         },
         function (error) {
-            console.error('An error occurred while loading the model:', error);
+            console.error('An error occurred while loading the model. Using placeholder box.', error);
+
+            // Fallback placeholder box if the plane model fails
+            const geometry = new THREE.BoxGeometry(1, 0.5, 1.5);  // A simple rectangular shape for a plane-like object
+            const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+            plane = new THREE.Mesh(geometry, material);
+            plane.position.set(0, 0.1, 0);
+            scene.add(plane);
         }
     );
 }
