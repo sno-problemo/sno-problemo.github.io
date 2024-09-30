@@ -50,7 +50,7 @@ function loadPlaneModel() {
     // Load Cessna model using GLTFLoader (ensure the model path is correct)
     const loader = new THREE.GLTFLoader();
     loader.load(
-        'Assets/Plane/cessna-172-2.glb',
+        'Assets/Plane/cessna-172.glb',
         function (gltf) {
             plane = gltf.scene;
             plane.position.set(0, 0.1, 0);
