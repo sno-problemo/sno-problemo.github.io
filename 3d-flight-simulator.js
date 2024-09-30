@@ -3,6 +3,9 @@ let canTakeOff = false, hasTakenOff = false;
 const maxSpeed = 1;
 const takeoffSpeed = 0.2;
 
+const textureLoader = new THREE.TextureLoader();
+const gltfLoader = new THREE.GLTFLoader();
+
 init();
 animate();
 
@@ -21,13 +24,11 @@ function init() {
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
     scene.add(ambientLight);
 
-    // Create a detailed Cessna plane (simplified for demo purposes)
-    plane = createCessnaModel();
-    plane.position.set(0, 0.2, 0);
-    scene.add(plane);
+    // Load realistic Cessna 3D model
+    loadCessnaModel();
 
-    // Create randomized terrain
-    terrain = createTerrain();
+    // Create randomized terrain with realistic textures
+    terrain = createTexturedTerrain();
     scene.add(terrain);
 
     // Create runway
@@ -86,20 +87,17 @@ function animate() {
     requestAnimationFrame(animate);
 
     if (!hasTakenOff) {
-        // On the runway, increase speed to take off
         if (canTakeOff && speed < takeoffSpeed) {
             speed += 0.001;
         }
         plane.translateZ(speed);
 
-        // If speed reaches takeoff speed, lift off
         if (speed >= takeoffSpeed) {
             altitude += 0.01;
             plane.position.y += altitude;
             hasTakenOff = true;
         }
     } else {
-        // Once airborne, control the plane
         plane.translateZ(speed);
     }
 
@@ -109,54 +107,37 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-function createCessnaModel() {
-    const planeGroup = new THREE.Group();
-
-    const bodyGeometry = new THREE.CylinderGeometry(0.5, 0.5, 6, 8);
-    const bodyMaterial = new THREE.MeshLambertMaterial({ color: 0x333333 });
-    const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
-    body.rotation.x = Math.PI / 2;
-    planeGroup.add(body);
-
-    const wingGeometry = new THREE.BoxGeometry(8, 0.2, 1);
-    const wingMaterial = new THREE.MeshLambertMaterial({ color: 0x888888 });
-    const wing = new THREE.Mesh(wingGeometry, wingMaterial);
-    wing.position.y = 0.3;
-    planeGroup.add(wing);
-
-    const tailWingGeometry = new THREE.BoxGeometry(2, 0.1, 0.5);
-    const tailWing = new THREE.Mesh(tailWingGeometry, wingMaterial);
-    tailWing.position.set(0, 0.3, -2.5);
-    planeGroup.add(tailWing);
-
-    const tailFinGeometry = new THREE.BoxGeometry(0.1, 1, 0.5);
-    const tailFin = new THREE.Mesh(tailFinGeometry, wingMaterial);
-    tailFin.position.set(0, 1, -2.5);
-    planeGroup.add(tailFin);
-
-    return planeGroup;
+function loadCessnaModel() {
+    gltfLoader.load('path/to/cessna-model.glb', (gltf) => {
+        plane = gltf.scene;
+        plane.position.set(0, 0.2, 0);
+        scene.add(plane);
+    }, undefined, (error) => {
+        console.error('An error occurred while loading the model:', error);
+    });
 }
 
 function createRunway() {
     const runwayGeometry = new THREE.PlaneGeometry(100, 10);
-    const runwayMaterial = new THREE.MeshLambertMaterial({ color: 0x444444 });
+    const runwayTexture = textureLoader.load('path/to/runway-texture.jpg');
+    const runwayMaterial = new THREE.MeshLambertMaterial({ map: runwayTexture });
     const runwayMesh = new THREE.Mesh(runwayGeometry, runwayMaterial);
     runwayMesh.rotation.x = -Math.PI / 2;
     return runwayMesh;
 }
 
-function createTerrain() {
+function createTexturedTerrain() {
     const terrainGeometry = new THREE.PlaneGeometry(1000, 1000, 100, 100);
     terrainGeometry.rotateX(-Math.PI / 2);
 
-    // Randomize the terrain using simplex noise (or Perlin)
     const simplex = new SimplexNoise();
     const vertices = terrainGeometry.attributes.position.array;
     for (let i = 0; i < vertices.length; i += 3) {
-        vertices[i + 2] = simplex.noise2D(vertices[i], vertices[i + 1]) * 5;  // Random elevation
+        vertices[i + 2] = simplex.noise2D(vertices[i], vertices[i + 1]) * 5;
     }
 
-    const terrainMaterial = new THREE.MeshLambertMaterial({ color: 0x228B22, wireframe: false });
+    const grassTexture = textureLoader.load('path/to/grass-texture.jpg');
+    const terrainMaterial = new THREE.MeshLambertMaterial({ map: grassTexture });
     const terrainMesh = new THREE.Mesh(terrainGeometry, terrainMaterial);
     terrainMesh.position.y = -0.1;
 
