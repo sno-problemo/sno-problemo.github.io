@@ -29,6 +29,13 @@ function init() {
     directionalLight.position.set(10, 10, 10);
     scene.add(directionalLight);
 
+    // Add a simple cube to test rendering
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    const cube = new THREE.Mesh(geometry, material);
+    cube.position.set(0, 1, 0);
+    scene.add(cube);
+
     loadPlaneModel();
 
     terrain = createTerrain();
@@ -47,20 +54,15 @@ function init() {
 }
 
 function loadPlaneModel() {
-    // Load Cessna model using GLTFLoader (ensure the model path is correct)
     const loader = new THREE.GLTFLoader();
     loader.load(
         'Assets/Plane/cessna-172.glb',
         function (gltf) {
             plane = gltf.scene;
-            plane.position.set(0, 0.1, 0);
+            plane.position.set(0, 1, 0); // Set position where it’s easily viewable
             plane.scale.set(1, 1, 1); // Adjust scale to make it visible
 
-            // Adjust the rotations to align the plane properly
-            plane.rotation.x = Math.PI / 2;  // Rotate 90 degrees around the X-axis
-            plane.rotation.y = Math.PI;      // Rotate 180 degrees around the Y-axis to face forward
-
-            // Add axes helper to visualize the orientation
+            // Add axes helper to visualize the orientation after plane loads
             const axisHelper = new THREE.AxesHelper(5);
             plane.add(axisHelper);
 
@@ -151,15 +153,13 @@ function animate() {
             if (canTakeOff && speed < takeoffSpeed) {
                 speed += 0.001;
             }
-            plane.translateZ(-speed); // Move forward along the negative Z-axis
+            plane.translateZ(-speed);
 
             if (speed >= takeoffSpeed) {
                 hasTakenOff = true;
             }
         } else {
-            plane.translateZ(-speed); // Keep moving forward along the negative Z-axis
-
-            // Adjust altitude when in flight
+            plane.translateZ(-speed);
             altitude += 0.01;
             plane.position.y = altitude;
         }
