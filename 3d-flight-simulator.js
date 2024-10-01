@@ -238,26 +238,26 @@ function animate() {
                 hasTakenOff = true;
             }
         } else {
-            // Move forward and maintain altitude
-            plane.translateZ(-speed);
-
-            // Adjust altitude if pitched up or down
-            altitude += Math.sin(plane.rotation.x) * speed;
-            plane.position.y = altitude;
+            // Move forward and adjust altitude based on pitch
+            plane.translateZ(-speed); // Move forward
+            plane.translateY(Math.sin(plane.rotation.x) * speed); // Adjust altitude based on pitch
         }
 
-        // Update the camera to follow the plane smoothly
-       camera.position.set(
-    plane.position.x + Math.sin(plane.rotation.y) * cameraOffsetDistance,
-    plane.position.y + cameraHeightOffset,
-    plane.position.z + Math.cos(plane.rotation.y) * cameraOffsetDistance
-);
+        // Update the camera to follow the plane smoothly from behind
+        const cameraOffset = new THREE.Vector3(0, 5, -20); // Offset behind the plane
+        const worldPosition = new THREE.Vector3();
+        plane.getWorldPosition(worldPosition); // Get the plane's world position
 
-        camera.lookAt(plane.position);
+        // Apply the offset relative to the plane's orientation
+        const cameraPosition = cameraOffset.applyMatrix4(plane.matrixWorld);
+        camera.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+
+        // Make the camera look at the plane's current position
+        camera.lookAt(worldPosition);
     }
 
     document.getElementById('speed').textContent = speed.toFixed(2);
-    document.getElementById('altitude').textContent = altitude.toFixed(2);
+    document.getElementById('altitude').textContent = plane.position.y.toFixed(2);
 
     renderer.render(scene, camera);
 }
