@@ -3,9 +3,6 @@ let speed = 0, altitude = 0;
 let canTakeOff = false, hasTakenOff = false;
 const maxSpeed = 1;
 const takeoffSpeed = 0.2;
-const axisHelper = new THREE.AxesHelper(5);
-plane.add(axisHelper);
-
 
 // Initialize the scene
 init();
@@ -59,12 +56,22 @@ function loadPlaneModel() {
             plane.position.set(0, 0.1, 0);
             plane.scale.set(1, 1, 1); // Adjust scale to make it visible
 
-           // Adjust the rotations to align the plane properly
-            plane.rotation.x = Math.PI;  // Rotate 90 degrees around the X-axis
-            plane.rotation.y = Math.PI; // Rotate 90 degrees around the Y-axis to align with negative Z-axis
-            
-            // Optionally, adjust plane.rotation.z if there's still an upside-down issue
-            // plane.rotation.z = Math.PI / 2; // Flip it 180 degrees to correct upside-down
+            // Adjust the rotations to align the plane properly
+            plane.rotation.x = Math.PI / 2;  // Rotate 90 degrees around the X-axis
+            plane.rotation.y = Math.PI;      // Rotate 180 degrees around the Y-axis to face forward
+
+            // Add axes helper to visualize the orientation
+            const axisHelper = new THREE.AxesHelper(5);
+            plane.add(axisHelper);
+
+            // Ensure plane materials are opaque and visible
+            plane.traverse(function (child) {
+                if (child.isMesh) {
+                    child.material.transparent = false; // Ensure it's not transparent
+                    child.material.opacity = 1; // Set full opacity
+                }
+            });
+
             scene.add(plane);
             console.log('Cessna 172 model loaded successfully');
         },
@@ -74,14 +81,6 @@ function loadPlaneModel() {
         }
     );
 }
-
-plane.traverse(function (child) {
-    if (child.isMesh) {
-        child.material.transparent = false; // Ensure it's not transparent
-        child.material.opacity = 1; // Set full opacity
-    }
-});
-
 
 function createTerrain() {
     const terrainGeometry = new THREE.PlaneGeometry(1000, 1000, 100, 100);
@@ -146,7 +145,7 @@ function createOnScreenControls() {
 function animate() {
     requestAnimationFrame(animate);
 
-if (plane) {
+    if (plane) {
         // Apply controls to move and rotate the plane
         if (!hasTakenOff) {
             if (canTakeOff && speed < takeoffSpeed) {
