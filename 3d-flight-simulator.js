@@ -54,8 +54,14 @@ function loadPlaneModel() {
         function (gltf) {
             plane = gltf.scene;
             plane.position.set(0, 0.1, 0);
-            plane.scale.set(1, 1, 1); // Adjust scale as needed
-            plane.rotation.z = Math.PI; // Correct rotation
+            plane.scale.set(1, 1, 1); // Adjust scale to make it visible
+
+            // Adjust rotation to align correctly
+            plane.rotation.x = Math.PI / 2; // Rotate the plane to face upwards if needed
+            plane.rotation.y = Math.PI; // Rotate along Y to point in the negative Z direction
+
+            // If the plane is still not aligned properly, further fine-tuning may be necessary
+            // Use plane.rotation.z if the plane is still not aligned properly
             scene.add(plane);
             console.log('Cessna 172 model loaded successfully');
         },
