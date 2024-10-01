@@ -191,22 +191,26 @@ function handleKeyDown(event) {
     if (plane) {
         switch (event.code) {
             case 'ArrowUp':
-                if (hasTakenOff) plane.rotation.x -= 0.05;
+                if (hasTakenOff) {
+                    plane.rotation.x -= 0.02; // Tilt up
+                }
                 break;
             case 'ArrowDown':
-                if (hasTakenOff) plane.rotation.x += 0.05;
+                if (hasTakenOff) {
+                    plane.rotation.x += 0.02; // Tilt down
+                }
                 break;
             case 'ArrowLeft':
-                plane.rotation.y += 0.05;
+                plane.rotation.y += 0.02; // Turn left
                 break;
             case 'ArrowRight':
-                plane.rotation.y -= 0.05;
+                plane.rotation.y -= 0.02; // Turn right
                 break;
             case 'KeyW':
-                canTakeOff = true;
+                canTakeOff = true; // Increase throttle
                 break;
             case 'KeyS':
-                speed -= 0.02;
+                speed -= 0.02; // Decrease throttle
                 if (speed < 0) speed = 0;
                 break;
         }
@@ -215,6 +219,44 @@ function handleKeyDown(event) {
 
 function handleKeyUp(event) {
     if (event.code === 'KeyW') {
-        canTakeOff = false;
+        canTakeOff = false; // Stop increasing throttle
     }
+}
+
+function animate() {
+    requestAnimationFrame(animate);
+
+    if (plane) {
+        // Apply controls to move and rotate the plane
+        if (!hasTakenOff) {
+            if (canTakeOff && speed < takeoffSpeed) {
+                speed += 0.001;
+            }
+            plane.translateZ(-speed); // Move forward along the negative Z-axis
+
+            if (speed >= takeoffSpeed) {
+                hasTakenOff = true;
+            }
+        } else {
+            // Move forward and maintain altitude
+            plane.translateZ(-speed);
+
+            // Adjust altitude if pitched up or down
+            altitude += Math.sin(plane.rotation.x) * speed;
+            plane.position.y = altitude;
+        }
+
+        // Update the camera to follow the plane smoothly
+        camera.position.set(
+            plane.position.x - Math.sin(plane.rotation.y) * 20,
+            plane.position.y + 5,
+            plane.position.z - Math.cos(plane.rotation.y) * 20
+        );
+        camera.lookAt(plane.position);
+    }
+
+    document.getElementById('speed').textContent = speed.toFixed(2);
+    document.getElementById('altitude').textContent = altitude.toFixed(2);
+
+    renderer.render(scene, camera);
 }
