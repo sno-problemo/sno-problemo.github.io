@@ -61,10 +61,10 @@ function loadPlaneModel() {
 
            // Adjust the rotations to align the plane properly
             plane.rotation.x = Math.PI / 2;  // Rotate 90 degrees around the X-axis
-            plane.rotation.y = -Math.PI; // Rotate -90 degrees around the Y-axis to align with negative Z-axis
+            plane.rotation.y = -Math.PI /2; // Rotate -90 degrees around the Y-axis to align with negative Z-axis
             
             // Optionally, adjust plane.rotation.z if there's still an upside-down issue
-            plane.rotation.z = Math.PI / 2; // Flip it 180 degrees to correct upside-down
+            // plane.rotation.z = Math.PI / 2; // Flip it 180 degrees to correct upside-down
             scene.add(plane);
             console.log('Cessna 172 model loaded successfully');
         },
