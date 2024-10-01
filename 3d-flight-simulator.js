@@ -55,7 +55,7 @@ function loadPlaneModel() {
             plane = gltf.scene;
             plane.position.set(0, 0.1, 0);
             plane.scale.set(1, 1, 1); // Adjust scale as needed
-            plane.rotation.y = Math.PI; // Correct rotation
+            plane.rotation.z = Math.PI; // Correct rotation
             scene.add(plane);
             console.log('Cessna 172 model loaded successfully');
         },
@@ -137,22 +137,26 @@ function createOnScreenControls() {
 function animate() {
     requestAnimationFrame(animate);
 
-    if (plane) {
+if (plane) {
+        // Apply controls to move and rotate the plane
         if (!hasTakenOff) {
             if (canTakeOff && speed < takeoffSpeed) {
                 speed += 0.001;
             }
-            plane.translateZ(-speed);
+            plane.translateZ(-speed); // Move forward along the negative Z-axis
 
             if (speed >= takeoffSpeed) {
                 hasTakenOff = true;
             }
         } else {
-            plane.translateZ(-speed);
+            plane.translateZ(-speed); // Keep moving forward along the negative Z-axis
+
+            // Adjust altitude when in flight
             altitude += 0.01;
             plane.position.y = altitude;
         }
 
+        // Update the camera to follow the plane
         camera.position.set(plane.position.x, plane.position.y + 5, plane.position.z + 20);
         camera.lookAt(plane.position);
     }
