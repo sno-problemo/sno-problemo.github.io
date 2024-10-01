@@ -227,7 +227,7 @@ function animate() {
     requestAnimationFrame(animate);
 
     if (plane) {
-        // Apply controls to move and rotate the plane
+        // Move the plane based on user input
         if (!hasTakenOff) {
             if (canTakeOff && speed < takeoffSpeed) {
                 speed += 0.001;
@@ -243,17 +243,13 @@ function animate() {
             plane.translateY(Math.sin(plane.rotation.x) * speed); // Adjust altitude based on pitch
         }
 
-        // Update the camera to follow the plane smoothly from behind
-        const cameraOffset = new THREE.Vector3(0, 5, -20); // Offset behind the plane
-        const worldPosition = new THREE.Vector3();
-        plane.getWorldPosition(worldPosition); // Get the plane's world position
+        // Camera follow logic
+        const cameraOffset = new THREE.Vector3(0, 5, -20); // Offset: 5 units up, 20 units behind the plane
+        const worldPosition = plane.localToWorld(cameraOffset.clone()); // Convert offset to world coordinates
 
-        // Apply the offset relative to the plane's orientation
-        const cameraPosition = cameraOffset.applyMatrix4(plane.matrixWorld);
-        camera.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z);
-
-        // Make the camera look at the plane's current position
-        camera.lookAt(worldPosition);
+        // Set camera position and make it look at the plane
+        camera.position.copy(worldPosition);
+        camera.lookAt(plane.position);
     }
 
     document.getElementById('speed').textContent = speed.toFixed(2);
@@ -261,3 +257,4 @@ function animate() {
 
     renderer.render(scene, camera);
 }
+
