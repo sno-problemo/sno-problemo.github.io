@@ -3,6 +3,9 @@ let speed = 0, altitude = 0;
 let canTakeOff = false, hasTakenOff = false;
 const maxSpeed = 1;
 const takeoffSpeed = 0.2;
+const axisHelper = new THREE.AxesHelper(5);
+plane.add(axisHelper);
+
 
 // Initialize the scene
 init();
@@ -56,12 +59,12 @@ function loadPlaneModel() {
             plane.position.set(0, 0.1, 0);
             plane.scale.set(1, 1, 1); // Adjust scale to make it visible
 
-            // Adjust rotation to align correctly
-            plane.rotation.x = Math.PI / 2; // Rotate the plane to face upwards if needed
-            plane.rotation.y = Math.PI; // Rotate along Y to point in the negative Z direction
-
-            // If the plane is still not aligned properly, further fine-tuning may be necessary
-            // Use plane.rotation.z if the plane is still not aligned properly
+           // Adjust the rotations to align the plane properly
+            plane.rotation.x = Math.PI / 2;  // Rotate 90 degrees around the X-axis
+            plane.rotation.y = -Math.PI / 2; // Rotate -90 degrees around the Y-axis to align with negative Z-axis
+            
+            // Optionally, adjust plane.rotation.z if there's still an upside-down issue
+            plane.rotation.z = Math.PI; // Flip it 180 degrees to correct upside-down
             scene.add(plane);
             console.log('Cessna 172 model loaded successfully');
         },
