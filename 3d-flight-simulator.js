@@ -54,7 +54,7 @@ function loadPlaneModel() {
         function (gltf) {
             plane = gltf.scene;
             plane.position.set(0, 0.1, 0);
-            plane.scale.set(0.01, 0.01, 0.01); // Adjust scale as needed
+            plane.scale.set(1, 1, 1); // Adjust scale as needed
             plane.rotation.y = Math.PI; // Correct rotation
             scene.add(plane);
             console.log('Cessna 172 model loaded successfully');
@@ -65,6 +65,14 @@ function loadPlaneModel() {
         }
     );
 }
+
+plane.traverse(function (child) {
+    if (child.isMesh) {
+        child.material.transparent = false; // Ensure it's not transparent
+        child.material.opacity = 1; // Set full opacity
+    }
+});
+
 
 function createTerrain() {
     const terrainGeometry = new THREE.PlaneGeometry(1000, 1000, 100, 100);
