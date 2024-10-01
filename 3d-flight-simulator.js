@@ -247,11 +247,12 @@ function animate() {
         }
 
         // Update the camera to follow the plane smoothly
-        camera.position.set(
-            plane.position.x - Math.sin(plane.rotation.y) * 20,
-            plane.position.y + 5,
-            plane.position.z - Math.cos(plane.rotation.y) * 20
-        );
+       camera.position.set(
+    plane.position.x + Math.sin(plane.rotation.y) * cameraOffsetDistance,
+    plane.position.y + cameraHeightOffset,
+    plane.position.z + Math.cos(plane.rotation.y) * cameraOffsetDistance
+);
+
         camera.lookAt(plane.position);
     }
 
