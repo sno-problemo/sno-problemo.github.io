@@ -261,24 +261,16 @@ function onWindowResize() {
     camera.updateProjectionMatrix();
 }
 
+let pitchUp = false, pitchDown = false;
+
 function handleKeyDown(event) {
     if (plane) {
         switch (event.code) {
             case 'ArrowUp':
-                if (hasTakenOff) {
-                    plane.rotation.x -= 0.02; // Tilt up
-                }
+                pitchUp = true; // Tilt nose up
                 break;
             case 'ArrowDown':
-                if (hasTakenOff) {
-                    plane.rotation.x += 0.02; // Tilt down
-                }
-                break;
-            case 'ArrowLeft':
-                plane.rotation.y += 0.02; // Turn left
-                break;
-            case 'ArrowRight':
-                plane.rotation.y -= 0.02; // Turn right
+                pitchDown = true; // Tilt nose down
                 break;
             case 'KeyW':
                 canTakeOff = true; // Increase throttle
@@ -290,6 +282,53 @@ function handleKeyDown(event) {
         }
     }
 }
+
+function handleKeyUp(event) {
+    if (plane) {
+        switch (event.code) {
+            case 'ArrowUp':
+                pitchUp = false; // Stop tilting nose up
+                break;
+            case 'ArrowDown':
+                pitchDown = false; // Stop tilting nose down
+                break;
+            case 'KeyW':
+                canTakeOff = false; // Stop throttle increase
+                break;
+        }
+    }
+}
+
+
+//function handleKeyDown(event) {
+//    if (plane) {
+//        switch (event.code) {
+//            case 'ArrowUp':
+//                if (hasTakenOff) {
+//                    plane.rotation.x -= 0.02; // Tilt up
+//                }
+//                break;
+//            case 'ArrowDown':
+//                if (hasTakenOff) {
+//                    plane.rotation.x += 0.02; // Tilt down
+//                }
+//                break;
+//            case 'ArrowLeft':
+//                plane.rotation.y += 0.02; // Turn left
+//                break;
+//            case 'ArrowRight':
+//                plane.rotation.y -= 0.02; // Turn right
+//                break;
+//            case 'KeyW':
+//                canTakeOff = true; // Increase throttle
+//                break;
+//            case 'KeyS':
+//                speed -= 0.02; // Decrease throttle
+//                if (speed < 0) speed = 0;
+//                break;
+//        }
+//    }
+//}
 
 function handleKeyUp(event) {
     if (event.code === 'KeyW') {
