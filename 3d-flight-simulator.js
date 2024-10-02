@@ -63,8 +63,10 @@ function loadPlaneModel() {
             const loadedPlane = gltf.scene;
 
             // Adjust the loaded plane's orientation to match the environment
-            loadedPlane.rotation.x = Math.PI / 2; // Rotate around X to face forward (-Z direction in Three.js)
-            loadedPlane.rotation.z = Math.PI; // This rotation might be necessary depending on the original model orientation
+            // loadedPlane.rotation.x = Math.PI / 2; // Rotate around X to face forward (-Z direction in Three.js)
+            loadedPlane.rotation.z = Math.PI / 2; // This rotation might be necessary depending on the original model orientation
+			loadedPlane.rotation.y = Math.PI; // Aligns the nose to face forward (-Z direction in Three.js)
+
 
             // Add the loaded plane to the wrapper
             plane.add(loadedPlane);
