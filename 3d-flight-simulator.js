@@ -322,7 +322,7 @@ function animate() {
         }
 
         // Camera follow logic
-        const relativeCameraOffset = new THREE.Vector3(0, 5, -20); // Offset behind and above the plane
+        const relativeCameraOffset = new THREE.Vector3(0, 5, 20); // Offset behind and above the plane
         const cameraPosition = plane.localToWorld(relativeCameraOffset.clone()); // Convert to world coordinates
 
         // Set camera position and make it look at the plane
