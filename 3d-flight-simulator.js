@@ -174,7 +174,7 @@ function createRunway() {
     const runwayGeometry = new THREE.PlaneGeometry(100, 10);
     const runwayMaterial = new THREE.MeshPhongMaterial({ color: 0x333333 });
     const runwayMesh = new THREE.Mesh(runwayGeometry, runwayMaterial);
-    runwayMesh.rotation.x = Math.PI / 2;
+    runwayMesh.rotation.x = 0;
     runwayMesh.position.y = 0;
     return runwayMesh;
 }
