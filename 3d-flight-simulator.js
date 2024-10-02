@@ -343,33 +343,24 @@ function animate() {
     requestAnimationFrame(animate);
 
     if (plane) {
-        // Move the plane based on user input
-        if (!hasTakenOff) {
-            if (canTakeOff && speed < maxSpeed) {
-                speed += 0.001; // Increase speed slowly until takeoff speed is reached
-            }
-            plane.translateZ(-speed); // Move forward along the negative Z-axis
-
-            if (speed >= takeoffSpeed) {
-                hasTakenOff = true;
-            }
-        } else {
-            // Manage speed, ensuring it doesn't exceed maxSpeed
-            if (canTakeOff && speed < maxSpeed) {
-                speed += 0.001; // Increase throttle if KeyW is held down
-            } else if (!canTakeOff && speed > 0) {
-                speed -= 0.001; // Gradual deceleration when no throttle input
-                if (speed < 0) speed = 0;
-            }
+        // Increase speed gradually if W key is pressed and speed hasn't reached maxSpeed
+        if (canTakeOff && speed < maxSpeed) {
+            speed += 0.002; // Increase throttle incrementally
+        } else if (!canTakeOff && speed > 0) {
+            speed -= 0.001; // Gradual deceleration if no throttle input
+            if (speed < 0) speed = 0; // Ensure speed does not go negative
+        }
 
             // Move forward along the negative Z-axis
             plane.translateZ(-speed);
 
-            // Apply gravity
-            let liftForce = 0;
-            if (Math.abs(plane.rotation.x) > 0.1) { // Only calculate lift if there's significant pitch
-                liftForce = Math.sin(plane.rotation.x) * speed * LIFT_FACTOR;
-            }
+            // Calculate lift
+        let liftForce = 0;
+        if (speed >= takeoffSpeed) {
+            // Generate lift based on speed and pitch
+            liftForce = Math.max(Math.sin(plane.rotation.x) * speed * LIFT_FACTOR, 0);
+        }
+
 
             altitude -= GRAVITY; // Gravity always pulls the plane down
             altitude += liftForce; // Lift counteracts gravity when present
