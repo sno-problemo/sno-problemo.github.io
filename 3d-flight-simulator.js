@@ -62,7 +62,7 @@ function loadPlaneModel() {
             plane = gltf.scene;
 
             plane.scale.set(1, 1, 1); // Adjust scale to make it visible
-            // plane.rotation.y = Math.PI / 2; // Rotate to make the plane face forward in the negative Z-axis
+            plane.rotation.y = Math.PI; // Rotate to make the plane face forward in the negative Z-axis
 
             planeWrapper.add(plane);
             planeWrapper.position.set(0, 1, 0); // Set position to make it easily viewable
