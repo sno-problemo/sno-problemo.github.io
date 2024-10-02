@@ -62,10 +62,13 @@ function loadPlaneModel() {
             plane = new THREE.Object3D(); // New empty object to hold the plane model
             const loadedPlane = gltf.scene;
 
+			// Step 1: Start by resetting all rotations to their default (zero)
+            loadedPlane.rotation.set(0, 0, 0);
+
             // Adjust the loaded plane's orientation to match the environment
             //loadedPlane.rotation.x = Math.PI; // Rotate around X to face forward (-Z direction in Three.js)
             //loadedPlane.rotation.z = Math.PI / 2; // This rotation might be necessary depending on the original model orientation
-			 loadedPlane.rotation.y = Math.PI; // Aligns the nose to face forward (-Z direction in Three.js)
+			loadedPlane.rotation.y = -Math.PI / 2; // Aligns the nose to face forward (-Z direction in Three.js)
 
 
             // Add the loaded plane to the wrapper
