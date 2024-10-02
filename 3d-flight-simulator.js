@@ -58,26 +58,23 @@ function loadPlaneModel() {
     loader.load(
         'Assets/Plane/cessna-172.glb',
         function (gltf) {
-            // Create a wrapper for the plane to allow easy adjustment
-            const planeWrapper = new THREE.Object3D();
             plane = gltf.scene;
-            
-            // Add the plane to the wrapper and apply necessary transformations
-            planeWrapper.add(plane);
-            planeWrapper.position.set(0, 1, 0);
-            planeWrapper.scale.set(1, 1, 1);
+            plane.position.set(0, 1, 0); // Set position to make it easily viewable
+            plane.scale.set(1, 1, 1); // Adjust scale to make it visible
 
-            // Corrective rotation to make the plane face the right direction
-            plane.rotation.y = -Math.PI / 2;  // This might be necessary, depending on model orientation
-            plane.rotation.x = 0;  // Ensure no tilt
-            plane.rotation.z = 0;  // Ensure no unwanted rotation
-            
-            // Add wrapper to the scene
-            scene.add(planeWrapper);
+            // Add an axes helper to visualize the orientation
+            const axisHelper = new THREE.AxesHelper(5);
+            plane.add(axisHelper);
 
-            // Assign the wrapper to control movements
-            plane = planeWrapper;
+            // Ensure plane materials are opaque and visible
+            plane.traverse(function (child) {
+                if (child.isMesh) {
+                    child.material.transparent = false; // Ensure it's not transparent
+                    child.material.opacity = 1; // Set full opacity
+                }
+            });
 
+            scene.add(plane);
             console.log('Cessna 172 model loaded successfully');
         },
         undefined,
@@ -117,7 +114,7 @@ function createRunway() {
     const runwayGeometry = new THREE.PlaneGeometry(100, 10);
     const runwayMaterial = new THREE.MeshPhongMaterial({ color: 0x333333 });
     const runwayMesh = new THREE.Mesh(runwayGeometry, runwayMaterial);
-    runwayMesh.rotation.x = -Math.PI / 2;
+    runwayMesh.rotation.x = Math.PI / 2;
     runwayMesh.position.y = 0;
     return runwayMesh;
 }
@@ -226,6 +223,7 @@ function handleKeyUp(event) {
 function animate() {
     requestAnimationFrame(animate);
 
+    // Ensure plane is defined before executing any operations
     if (plane) {
         // Move the plane based on user input
         if (!hasTakenOff) {
@@ -252,8 +250,13 @@ function animate() {
         camera.lookAt(plane.position);
     }
 
-    document.getElementById('speed').textContent = speed.toFixed(2);
-    document.getElementById('altitude').textContent = plane.position.y.toFixed(2);
+    if (renderer) {
+        renderer.render(scene, camera);
+    }
 
-    renderer.render(scene, camera);
+    // Update UI
+    if (plane) {
+        document.getElementById('speed').textContent = speed.toFixed(2);
+        document.getElementById('altitude').textContent = plane.position.y.toFixed(2);
+    }
 }
