@@ -62,6 +62,9 @@ function loadPlaneModel() {
             plane.position.set(0, 1, 0); // Set position to make it easily viewable
             plane.scale.set(1, 1, 1); // Adjust scale to make it visible
 
+            // Correct the plane's rotation to face forward (negative Z direction)
+            plane.rotation.y = Math.PI / 2;  // Rotate 90 degrees to align properly with forward movement
+
             // Add an axes helper to visualize the orientation
             const axisHelper = new THREE.AxesHelper(5);
             plane.add(axisHelper);
@@ -242,7 +245,7 @@ function animate() {
         }
 
         // Camera follow logic
-        const relativeCameraOffset = new THREE.Vector3(0, 5, 20); // Offset: 5 units up, 20 units behind the plane
+        const relativeCameraOffset = new THREE.Vector3(0, 5, -20); // Offset: 5 units up, 20 units behind the plane
         const cameraPosition = plane.localToWorld(relativeCameraOffset.clone()); // Convert to world coordinates
 
         // Set camera position and make it look at the plane
