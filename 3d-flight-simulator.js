@@ -222,7 +222,7 @@ function animate() {
         }
 
         // Update the camera to follow the plane
-        camera.position.set(plane.position.x, plane.position.y + 5, plane.position.z + 20);
+        camera.position.set(plane.position.x, plane.position.y + 5, plane.position.z - 20);
         camera.lookAt(plane.position);
     }
 
