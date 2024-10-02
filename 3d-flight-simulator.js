@@ -58,32 +58,39 @@ function loadPlaneModel() {
     loader.load(
         'Assets/Plane/cessna-172.glb',
         function (gltf) {
-            const planeWrapper = new THREE.Object3D(); // Create a wrapper to help orient the plane
+            // Create a wrapper object to handle rotation and positioning
+            const planeWrapper = new THREE.Object3D();
             plane = gltf.scene;
 
-            plane.scale.set(1, 1, 1); // Adjust scale to make it visible
-            plane.rotation.y = Math.PI; // Rotate to make the plane face forward in the negative Z-axis
-
+            // Add the plane model to the wrapper
             planeWrapper.add(plane);
-            planeWrapper.position.set(0, 1, 0); // Set position to make it easily viewable
 
-            // Add an axes helper to visualize the orientation
+            // Position and scale the wrapper to make the plane visible
+            planeWrapper.position.set(0, 1, 0);
+            planeWrapper.scale.set(1, 1, 1);
+
+            // Rotate the wrapper to align the plane correctly
+            planeWrapper.rotation.y = Math.PI / 2; // Adjust this value as needed
+
+            // Add an axes helper to visualize the orientation of the plane
             const axisHelper = new THREE.AxesHelper(5);
             planeWrapper.add(axisHelper);
 
             // Ensure plane materials are opaque and visible
             plane.traverse(function (child) {
                 if (child.isMesh) {
-                    child.material.transparent = false; // Ensure it's not transparent
-                    child.material.opacity = 1; // Set full opacity
+                    child.material.transparent = false;
+                    child.material.opacity = 1;
                 }
             });
 
+            // Add the wrapper to the scene
             scene.add(planeWrapper);
-            console.log('Cessna 172 model loaded successfully');
 
-            // Assign the wrapper as the main plane reference for controls
+            // Assign the wrapper as the main reference for movement and controls
             plane = planeWrapper;
+
+            console.log('Cessna 172 model loaded successfully');
         },
         undefined,
         function (error) {
@@ -91,6 +98,7 @@ function loadPlaneModel() {
         }
     );
 }
+
 
 
 
