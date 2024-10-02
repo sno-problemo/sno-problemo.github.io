@@ -217,7 +217,7 @@ function animate() {
         }
 
         // Forward Movement: Move in the local -Z direction to go forward
-        plane.translateZ(-speed); // Negative Z makes the plane move forward in its local space
+        plane.translateZ(speed); // Negative Z makes the plane move forward in its local space
 
         // Lift: If enough speed is achieved, the plane starts gaining altitude
         if (speed >= takeoffSpeed) {
