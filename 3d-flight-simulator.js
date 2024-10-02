@@ -245,10 +245,10 @@ function animate() {
 
         // Camera follow logic
         const relativeCameraOffset = new THREE.Vector3(0, 5, 20); // Offset: 5 units up, 20 units behind the plane
-        const cameraOffset = relativeCameraOffset.applyMatrix4(plane.matrixWorld); // Convert to world coordinates
+        const cameraPosition = plane.localToWorld(relativeCameraOffset.clone()); // Convert to world coordinates
 
         // Set camera position and make it look at the plane
-        camera.position.set(cameraOffset.x, cameraOffset.y, cameraOffset.z);
+        camera.position.copy(cameraPosition);
         camera.lookAt(plane.position);
     }
 
@@ -257,4 +257,3 @@ function animate() {
 
     renderer.render(scene, camera);
 }
-
