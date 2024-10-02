@@ -59,39 +59,27 @@ function loadPlaneModel() {
         'Assets/Plane/cessna-172.glb',
         function (gltf) {
             // Create a wrapper object to handle rotation and positioning
-            const planeWrapper = new THREE.Object3D();
-            plane = gltf.scene;
+            plane = new THREE.Object3D(); // New empty object to hold the plane model
+            const loadedPlane = gltf.scene;
 
-            // Add the plane model to the wrapper
-            planeWrapper.add(plane);
+            // Adjust the loaded plane's orientation to match the environment
+            loadedPlane.rotation.x = Math.PI / 2; // Rotate around X to face forward (-Z direction in Three.js)
+            loadedPlane.rotation.z = Math.PI; // This rotation might be necessary depending on the original model orientation
 
-            // Position and scale the wrapper to make the plane visible
-            planeWrapper.position.set(0, 1, 0);
-            planeWrapper.scale.set(1, 1, 1);
+            // Add the loaded plane to the wrapper
+            plane.add(loadedPlane);
 
-            // Rotate the wrapper to align the plane correctly
-            // planeWrapper.rotation.y = Math.PI; // Adjust this value as needed
-			planeWrapper.rotation.x = -Math.PI / 2;
+            // Position the wrapper so the plane sits on the runway properly
+            plane.position.set(0, 1, 0); // Adjust Y value if necessary to match the ground level
 
-            // Add an axes helper to visualize the orientation of the plane
+            // Use an AxesHelper to debug the plane's current orientation
             const axisHelper = new THREE.AxesHelper(5);
-            planeWrapper.add(axisHelper);
+            plane.add(axisHelper);
 
-            // Ensure plane materials are opaque and visible
-            plane.traverse(function (child) {
-                if (child.isMesh) {
-                    child.material.transparent = false;
-                    child.material.opacity = 1;
-                }
-            });
+            // Add the plane to the scene
+            scene.add(plane);
 
-            // Add the wrapper to the scene
-            scene.add(planeWrapper);
-
-            // Assign the wrapper as the main reference for movement and controls
-            plane = planeWrapper;
-
-            console.log('Cessna 172 model loaded successfully');
+            console.log('Cessna 172 model loaded and oriented successfully');
         },
         undefined,
         function (error) {
@@ -99,6 +87,54 @@ function loadPlaneModel() {
         }
     );
 }
+
+
+//function loadPlaneModel() {
+//    const loader = new THREE.GLTFLoader();
+//    loader.load(
+//        'Assets/Plane/cessna-172.glb',
+//        function (gltf) {
+//            // Create a wrapper object to handle rotation and positioning
+//            const planeWrapper = new THREE.Object3D();
+//            plane = gltf.scene;
+
+            // Add the plane model to the wrapper
+//            planeWrapper.add(plane);
+//
+//            // Position and scale the wrapper to make the plane visible
+//            planeWrapper.position.set(0, 1, 0);
+//            planeWrapper.scale.set(1, 1, 1);
+
+            // Rotate the wrapper to align the plane correctly
+  //          // planeWrapper.rotation.y = Math.PI; // Adjust this value as needed
+//			planeWrapper.rotation.x = -Math.PI / 2;
+//
+            // Add an axes helper to visualize the orientation of the plane
+    //        const axisHelper = new THREE.AxesHelper(5);
+  //          planeWrapper.add(axisHelper);
+//
+            // Ensure plane materials are opaque and visible
+            //plane.traverse(function (child) {
+          //      if (child.isMesh) {
+        //            child.material.transparent = false;
+      //              child.material.opacity = 1;
+    //            }
+  //          });
+//
+    //        // Add the wrapper to the scene
+  //          scene.add(planeWrapper);
+//
+    //        // Assign the wrapper as the main reference for movement and controls
+  //          plane = planeWrapper;
+//
+  //          console.log('Cessna 172 model loaded successfully');
+//        },
+//        undefined,
+//        function (error) {
+//            console.error('An error occurred while loading the model:', error);
+//        }
+//    );
+//}
 
 
 
