@@ -244,7 +244,7 @@ function animate() {
         }
 
         // Camera follow logic
-        const relativeCameraOffset = new THREE.Vector3(0, 5, -20); // Offset: 5 units up, 20 units behind the plane
+        const relativeCameraOffset = new THREE.Vector3(0, 5, 20); // Offset: 5 units up, 20 units behind the plane
         const cameraOffset = relativeCameraOffset.applyMatrix4(plane.matrixWorld); // Convert to world coordinates
 
         // Set camera position and make it look at the plane
