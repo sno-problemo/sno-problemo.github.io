@@ -336,7 +336,6 @@ function handleKeyUp(event) {
     }
 }
 
-// Define constants for gravity and lift
 const GRAVITY = 0.005; // Gravity pulling the plane down
 const LIFT_FACTOR = 0.05; // Factor to determine lift based on pitch and speed
 
@@ -346,8 +345,8 @@ function animate() {
     if (plane) {
         // Move the plane based on user input
         if (!hasTakenOff) {
-            if (canTakeOff && speed < takeoffSpeed) {
-                speed += 0.001;
+            if (canTakeOff && speed < maxSpeed) {
+                speed += 0.001; // Increase speed slowly until takeoff speed is reached
             }
             plane.translateZ(-speed); // Move forward along the negative Z-axis
 
@@ -355,32 +354,42 @@ function animate() {
                 hasTakenOff = true;
             }
         } else {
-            // Move forward and adjust altitude based on pitch
-            plane.translateZ(-speed); // Move forward
+            // Manage speed, ensuring it doesn't exceed maxSpeed
+            if (canTakeOff && speed < maxSpeed) {
+                speed += 0.001; // Increase throttle if KeyW is held down
+            } else if (!canTakeOff && speed > 0) {
+                speed -= 0.001; // Gradual deceleration when no throttle input
+                if (speed < 0) speed = 0;
+            }
 
-            // Calculate lift force
+            // Move forward along the negative Z-axis
+            plane.translateZ(-speed);
+
+            // Apply gravity
             let liftForce = 0;
-            if (Math.abs(plane.rotation.x) > 0.1) { // Only change altitude if there's significant pitch
+            if (Math.abs(plane.rotation.x) > 0.1) { // Only calculate lift if there's significant pitch
                 liftForce = Math.sin(plane.rotation.x) * speed * LIFT_FACTOR;
             }
 
-            // Apply gravity
-            if (speed < takeoffSpeed * 1.5) {
-                altitude -= GRAVITY; // Apply gravity if not enough speed for stable flight
-            }
+            altitude -= GRAVITY; // Gravity always pulls the plane down
+            altitude += liftForce; // Lift counteracts gravity when present
 
-            // Apply lift to counteract gravity
-            altitude += liftForce;
-
-            // Prevent plane from going below the ground level
+            // Prevent plane from falling through the ground
             if (altitude < 0.1) {
                 altitude = 0.1;
                 speed = 0; // If the plane hits the ground, reset speed
-                hasTakenOff = false; // The plane is grounded
+                hasTakenOff = false; // Plane is grounded
             }
 
             // Set the plane's altitude
             plane.position.y = altitude;
+
+            // Apply pitch changes
+            if (pitchUp) {
+                plane.rotation.x -= 0.01; // Tilt nose up
+            } else if (pitchDown) {
+                plane.rotation.x += 0.01; // Tilt nose down
+            }
         }
 
         // Camera follow logic
