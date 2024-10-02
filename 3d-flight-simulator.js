@@ -70,7 +70,7 @@ function loadPlaneModel() {
             planeWrapper.scale.set(1, 1, 1);
 
             // Rotate the wrapper to align the plane correctly
-            planeWrapper.rotation.y = Math.PI / 2; // Adjust this value as needed
+            planeWrapper.rotation.y = Math.PI; // Adjust this value as needed
 
             // Add an axes helper to visualize the orientation of the plane
             const axisHelper = new THREE.AxesHelper(5);
