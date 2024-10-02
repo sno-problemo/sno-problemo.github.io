@@ -68,7 +68,8 @@ function loadPlaneModel() {
             // Adjust the loaded plane's orientation to match the environment
             //loadedPlane.rotation.x = Math.PI; // Rotate around X to face forward (-Z direction in Three.js)
             //loadedPlane.rotation.z = Math.PI / 2; // This rotation might be necessary depending on the original model orientation
-			loadedPlane.rotation.y = -Math.PI / 2; // Aligns the nose to face forward (-Z direction in Three.js)
+			//loadedPlane.rotation.y = -Math.PI / 2; // Plane faces camera
+			loadedPlane.rotation.y = Math.PI / 2
 
 
             // Add the loaded plane to the wrapper
