@@ -205,32 +205,49 @@ function animate() {
     requestAnimationFrame(animate);
 
     if (plane) {
-        // Apply controls to move and rotate the plane
-        if (!hasTakenOff) {
-            if (canTakeOff && speed < takeoffSpeed) {
-                speed += 0.001;
-            }
-            plane.translateZ(-speed);
-
-            if (speed >= takeoffSpeed) {
-                hasTakenOff = true;
-            }
-        } else {
-            plane.translateZ(-speed);
-            altitude += 0.01;
-            plane.position.y = altitude;
+        // Thrust: Increase speed with throttle (limited by max speed)
+        if (canTakeOff && speed < maxSpeed) {
+            speed += 0.001; // Gradually increase speed
         }
 
-        // Update the camera to follow the plane
-        camera.position.set(plane.position.x, plane.position.y + 5, plane.position.z - 20);
+        // Drag: Gradual deceleration if no throttle is applied
+        if (!canTakeOff && speed > 0) {
+            speed -= 0.0005; // Gradually decrease speed when not throttling
+            if (speed < 0) speed = 0; // Ensure speed doesn't go negative
+        }
+
+        // Forward Movement: Move in the local -Z direction to go forward
+        plane.translateZ(-speed); // Negative Z makes the plane move forward in its local space
+
+        // Lift: If enough speed is achieved, the plane starts gaining altitude
+        if (speed >= takeoffSpeed) {
+            hasTakenOff = true;
+        }
+
+        if (hasTakenOff) {
+            // Apply lift based on pitch
+            const liftForce = Math.sin(plane.rotation.x) * speed * 0.05; // Simplified lift logic
+            altitude += liftForce;
+            plane.position.y = Math.max(altitude, 0.1); // Ensure the plane stays above the ground
+        }
+
+        // Camera Follow Logic
+        const relativeCameraOffset = new THREE.Vector3(0, 5, -20);
+        const cameraPosition = plane.localToWorld(relativeCameraOffset.clone());
+
+        // Set camera position and ensure it looks at the plane
+        camera.position.copy(cameraPosition);
         camera.lookAt(plane.position);
+
+        // Update UI elements for speed and altitude
+        document.getElementById('speed').textContent = speed.toFixed(2);
+        document.getElementById('altitude').textContent = plane.position.y.toFixed(2);
     }
 
-    document.getElementById('speed').textContent = speed.toFixed(2);
-    document.getElementById('altitude').textContent = altitude.toFixed(2);
-
+    // Render the scene
     renderer.render(scene, camera);
 }
+
 
 function onWindowResize() {
     const width = window.innerWidth;
