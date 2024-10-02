@@ -69,8 +69,8 @@ function loadPlaneModel() {
             //loadedPlane.rotation.x = Math.PI; // Rotate around X to face forward (-Z direction in Three.js)
             //loadedPlane.rotation.z = Math.PI / 2; // This rotation might be necessary depending on the original model orientation
 			//loadedPlane.rotation.y = -Math.PI / 2; // Plane faces camera
-			loadedPlane.rotation.y = Math.PI / 2
-
+			loadedPlane.rotation.y = Math.PI / 2; // Plane faces forward logically but moves towards camera
+			loadedPlane.rotation.y += Math.PI; // This additional 180-degree rotation ensures that the red axis (X-axis) points towards the right wing, and swaps the left and right wings.
 
             // Add the loaded plane to the wrapper
             plane.add(loadedPlane);
