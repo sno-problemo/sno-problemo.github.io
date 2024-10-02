@@ -58,16 +58,18 @@ function loadPlaneModel() {
     loader.load(
         'Assets/Plane/cessna-172.glb',
         function (gltf) {
+            const planeWrapper = new THREE.Object3D(); // Create a wrapper to help orient the plane
             plane = gltf.scene;
-            plane.position.set(0, 1, 0); // Set position to make it easily viewable
-            plane.scale.set(1, 1, 1); // Adjust scale to make it visible
 
-            // Correct the plane's rotation to face forward (negative Z direction)
-            plane.rotation.y = Math.PI / 2;  // Rotate 90 degrees to align properly with forward movement
+            plane.scale.set(1, 1, 1); // Adjust scale to make it visible
+            plane.rotation.y = Math.PI / 2; // Rotate to make the plane face forward in the negative Z-axis
+
+            planeWrapper.add(plane);
+            planeWrapper.position.set(0, 1, 0); // Set position to make it easily viewable
 
             // Add an axes helper to visualize the orientation
             const axisHelper = new THREE.AxesHelper(5);
-            plane.add(axisHelper);
+            planeWrapper.add(axisHelper);
 
             // Ensure plane materials are opaque and visible
             plane.traverse(function (child) {
@@ -77,8 +79,11 @@ function loadPlaneModel() {
                 }
             });
 
-            scene.add(plane);
+            scene.add(planeWrapper);
             console.log('Cessna 172 model loaded successfully');
+
+            // Assign the wrapper as the main plane reference for controls
+            plane = planeWrapper;
         },
         undefined,
         function (error) {
@@ -86,6 +91,7 @@ function loadPlaneModel() {
         }
     );
 }
+
 
 
 function createTerrain() {
@@ -226,7 +232,6 @@ function handleKeyUp(event) {
 function animate() {
     requestAnimationFrame(animate);
 
-    // Ensure plane is defined before executing any operations
     if (plane) {
         // Move the plane based on user input
         if (!hasTakenOff) {
@@ -241,11 +246,15 @@ function animate() {
         } else {
             // Move forward and adjust altitude based on pitch
             plane.translateZ(-speed); // Move forward
-            plane.translateY(Math.sin(plane.rotation.x) * speed); // Adjust altitude based on pitch
+
+            // Adjust altitude based on pitch
+            if (Math.abs(plane.rotation.x) > 0.1) { // Only change altitude if there's significant pitch
+                plane.translateY(Math.sin(plane.rotation.x) * speed);
+            }
         }
 
         // Camera follow logic
-        const relativeCameraOffset = new THREE.Vector3(0, 5, -20); // Offset: 5 units up, 20 units behind the plane
+        const relativeCameraOffset = new THREE.Vector3(0, 5, -20); // Offset behind and above the plane
         const cameraPosition = plane.localToWorld(relativeCameraOffset.clone()); // Convert to world coordinates
 
         // Set camera position and make it look at the plane
