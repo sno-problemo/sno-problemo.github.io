@@ -297,6 +297,10 @@ function handleKeyUp(event) {
     }
 }
 
+// Define constants for gravity and lift
+const GRAVITY = 0.005; // Gravity pulling the plane down
+const LIFT_FACTOR = 0.05; // Factor to determine lift based on pitch and speed
+
 function animate() {
     requestAnimationFrame(animate);
 
@@ -315,10 +319,29 @@ function animate() {
             // Move forward and adjust altitude based on pitch
             plane.translateZ(-speed); // Move forward
 
-            // Adjust altitude based on pitch
+            // Calculate lift force
+            let liftForce = 0;
             if (Math.abs(plane.rotation.x) > 0.1) { // Only change altitude if there's significant pitch
-                plane.translateY(Math.sin(plane.rotation.x) * speed);
+                liftForce = Math.sin(plane.rotation.x) * speed * LIFT_FACTOR;
             }
+
+            // Apply gravity
+            if (speed < takeoffSpeed * 1.5) {
+                altitude -= GRAVITY; // Apply gravity if not enough speed for stable flight
+            }
+
+            // Apply lift to counteract gravity
+            altitude += liftForce;
+
+            // Prevent plane from going below the ground level
+            if (altitude < 0.1) {
+                altitude = 0.1;
+                speed = 0; // If the plane hits the ground, reset speed
+                hasTakenOff = false; // The plane is grounded
+            }
+
+            // Set the plane's altitude
+            plane.position.y = altitude;
         }
 
         // Camera follow logic
