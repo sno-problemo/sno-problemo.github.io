@@ -136,8 +136,9 @@ function loadPlaneModel() {
 
             // Adjust the loaded plane's orientation
             //No adjustments = Plane faces right
-            loadedPlane.rotation.y = -Math.PI / 2;
-            //loadedPlane.rotation.y += Math.PI; // Plane faces left
+            loadedPlane.rotation.y = -Math.PI / 2; // Plane faces the camera
+            loadedPlane.rotation.y += Math.PI; // Plane faces left
+			//loadedPlane.rotation.y = Math.PI / 2; 
 
             plane.add(loadedPlane);
             plane.position.set(0, 1, 0);
