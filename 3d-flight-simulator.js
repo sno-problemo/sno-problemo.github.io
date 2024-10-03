@@ -136,10 +136,10 @@ function loadPlaneModel() {
 
             // Adjust the loaded plane's orientation
             //loadedPlane.rotation.y = Math.PI / 2;
-            loadedPlane.rotation.y += Math.PI; // Correct direction
+            //loadedPlane.rotation.y += Math.PI; // Correct direction
 
             plane.add(loadedPlane);
-            //plane.position.set(0, 1, 0);
+            plane.position.set(0, 1, 0);
 
             const axisHelper = new THREE.AxesHelper(5);
             plane.add(axisHelper);
