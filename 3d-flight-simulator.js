@@ -237,9 +237,9 @@ function animate() {{
     }
 
     // Render the scene
-    If (renderer) {
+    If (renderer) 
     	renderer.render(scene, camera);
-    }
+    
 }
 
 
