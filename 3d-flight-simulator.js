@@ -215,12 +215,12 @@ function animate() {{
 		//
 		plane.position.y = altitude
 
-        //if (hasTakenOff) {
-            // Apply lift based on pitch
-            const liftForce = Math.sin(plane.rotation.x) * speed * 0.05; // Simplified lift logic
-            altitude += liftForce;
-            plane.position.y = Math.max(altitude, 0.1); // Ensure the plane stays above the ground
-        }
+//        if (hasTakenOff) {
+//            // Apply lift based on pitch
+//            const liftForce = Math.sin(plane.rotation.x) * speed * 0.05; // Simplified lift logic
+//            altitude += liftForce;
+//            plane.position.y = Math.max(altitude, 0.1); // Ensure the plane stays above the ground
+//        }
 		if (plane) {
         // Camera Follow Logic
         	const relativeCameraOffset = new THREE.Vector3(0, 5, -20);
@@ -289,73 +289,72 @@ function handleKeyUp(event) {
     }
 }
 
-function handleKeyUp(event) {
-    if (event.code === 'KeyW') {
-        canTakeOff = false; // Stop increasing throttle
-    }
-}
+//function handleKeyUp(event) {
+//    if (event.code === 'KeyW') {
+//        canTakeOff = false; // Stop increasing throttle
+//    }
+//}
 
 
 //function animate() {
-    requestAnimationFrame(animate);
+//    requestAnimationFrame(animate);
 
-    if (plane) {
+//    if (plane) {
         // Increase speed gradually if W key is pressed and speed hasn't reached maxSpeed
-        if (canTakeOff && speed < maxSpeed) {
-            speed += 0.002; // Increase throttle incrementally
-        } else if (!canTakeOff && speed > 0) {
-            speed -= 0.001; // Gradual deceleration if no throttle input
-            if (speed < 0) speed = 0; // Ensure speed does not go negative
-        }
+//        if (canTakeOff && speed < maxSpeed) {
+//            speed += 0.002; // Increase throttle incrementally
+//        } else if (!canTakeOff && speed > 0) {
+//            speed -= 0.001; // Gradual deceleration if no throttle input
+//            if (speed < 0) speed = 0; // Ensure speed does not go negative
+//        }
 
             // Move forward along the negative Z-axis
-            plane.translateZ(-speed);
+//            plane.translateZ(-speed);
 
             // Calculate lift
-        let liftForce = 0;
-        if (speed >= takeoffSpeed) {
+//        let liftForce = 0;
+//        if (speed >= takeoffSpeed) {
             // Generate lift based on speed and pitch
-            liftForce = Math.max(Math.sin(plane.rotation.x) * speed * LIFT_FACTOR, 0);
-        }
+//            liftForce = Math.max(Math.sin(plane.rotation.x) * speed * LIFT_FACTOR, 0);
+//        }
 
 
-            altitude -= GRAVITY; // Gravity always pulls the plane down
-            altitude += liftForce; // Lift counteracts gravity when present
-
+//            altitude -= GRAVITY; // Gravity always pulls the plane down
+//            altitude += liftForce; // Lift counteracts gravity when present
+//
             // Prevent plane from falling through the ground
-            if (altitude < 0.1) {
-                altitude = 0.1;
-                speed = 0; // If the plane hits the ground, reset speed
-                hasTakenOff = false; // Plane is grounded
-            }
+//            if (altitude < 0.1) {
+//                altitude = 0.1;
+//                speed = 0; // If the plane hits the ground, reset speed
+//                hasTakenOff = false; // Plane is grounded
+//            }
 
             // Set the plane's altitude
-            plane.position.y = altitude;
-
+//            plane.position.y = altitude;
+//
             // Apply pitch changes
-            if (pitchUp) {
-                plane.rotation.x -= 0.01; // Tilt nose up
-            } else if (pitchDown) {
-                plane.rotation.x += 0.01; // Tilt nose down
-            }
-        }
-
+//            if (pitchUp) {
+//                plane.rotation.x -= 0.01; // Tilt nose up
+//            } else if (pitchDown) {
+//                plane.rotation.x += 0.01; // Tilt nose down
+//            }
+//        }
+//
         // Camera follow logic
-        const relativeCameraOffset = new THREE.Vector3(0, 5, 20); // Offset behind and above the plane
-        const cameraPosition = plane.localToWorld(relativeCameraOffset.clone()); // Convert to world coordinates
-
+//        const relativeCameraOffset = new THREE.Vector3(0, 5, 20); // Offset behind and above the plane
+//        const cameraPosition = plane.localToWorld(relativeCameraOffset.clone()); // Convert to world coordinates
+//
         // Set camera position and make it look at the plane
-        camera.position.copy(cameraPosition);
-        camera.lookAt(plane.position);
-    }
-
+//        camera.position.copy(cameraPosition);
+//        camera.lookAt(plane.position);
+//    }
+//
 //    if (renderer) {
-        renderer.render(scene, camera);
-    }
-
+//        renderer.render(scene, camera);
+//    }
+//
     // Update UI
 //    if (plane) {
-        document.getElementById('speed').textContent = speed.toFixed(2);
-        document.getElementById('altitude').textContent = plane.position.y.toFixed(2);
-    }
-
+//        document.getElementById('speed').textContent = speed.toFixed(2);
+//        document.getElementById('altitude').textContent = plane.position.y.toFixed(2);
+//        }
