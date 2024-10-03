@@ -37,11 +37,11 @@ function init() {
     scene.add(directionalLight);
 
     // Add a simple cube to test rendering
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    const cube = new THREE.Mesh(geometry, material);
-    cube.position.set(0, 1, 0);
-    scene.add(cube);
+   // const geometry = new THREE.BoxGeometry(1, 1, 1);
+   // const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+   // const cube = new THREE.Mesh(geometry, material);
+   // cube.position.set(0, 1, 0);
+    //scene.add(cube);
 
     loadPlaneModel();
 
@@ -53,11 +53,20 @@ function init() {
 
     createOnScreenControls();
 
+	// Add event listeners
     window.addEventListener('resize', onWindowResize, false);
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('keyup', handleKeyUp);
 
     animate();
+}
+
+function onWindowResize() {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    renderer.setSize(width, height);
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
 }
 
 function loadPlaneModel() {
@@ -240,15 +249,6 @@ function animate() {{
     If (renderer) 
     	renderer.render(scene, camera);
     
-}
-
-
-function onWindowResize() {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    renderer.setSize(width, height);
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
 }
 
 let pitchUp = false, pitchDown = false;
