@@ -208,7 +208,7 @@ function animate() {
             if (speed >= takeoffSpeed) {
                 hasTakenOff = true;
             }
-        } else {
+         else {
             if (canTakeOff && speed < maxSpeed) {
                 speed += 0.002;
             } else if (!canTakeOff && speed > 0) {
@@ -235,7 +235,7 @@ function animate() {
 
             if (pitchUp) {
                 plane.rotation.x -= 0.01;
-            } else if (pitchDown) {
+             else if (pitchDown) {
                 plane.rotation.x += 0.01;
             }
 
@@ -248,7 +248,8 @@ function animate() {
             document.getElementById('speed').textContent = speed.toFixed(2);
             document.getElementById('altitude').textContent = plane.position.y
 	}
-    // Render the scene
+   } // Render the scene
     if (renderer) {
         renderer.render(scene, camera);
     }
+    }}}}
