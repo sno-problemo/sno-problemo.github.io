@@ -358,3 +358,4 @@ function handleKeyUp(event) {
 //        document.getElementById('speed').textContent = speed.toFixed(2);
 //        document.getElementById('altitude').textContent = plane.position.y.toFixed(2);
 //        
+}
