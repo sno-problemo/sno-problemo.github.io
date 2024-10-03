@@ -247,3 +247,9 @@ function animate() {
 
             document.getElementById('speed').textContent = speed.toFixed(2);
             document.getElementById('altitude').textContent = plane.position.y
+	}
+    // Render the scene
+    if (renderer) {
+        renderer.render(scene, camera);
+    }
+}
