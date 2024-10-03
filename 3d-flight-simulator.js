@@ -252,4 +252,3 @@ function animate() {
     if (renderer) {
         renderer.render(scene, camera);
     }
-}
