@@ -11,8 +11,8 @@ const GRAVITY = 0.005;  // Gravity constant pulling the plane down
 const LIFT_FACTOR = 0.05; // Factor to determine lift based on pitch and speed
 
 let pitchUp = false, pitchDown = false;
+let yawLeft = false, yawRight = false;
 
-// Define the `handleKeyDown` function
 function handleKeyDown(event) {
     if (plane) {
         switch (event.code) {
@@ -21,6 +21,12 @@ function handleKeyDown(event) {
                 break;
             case 'ArrowDown':
                 pitchDown = true; // Tilt nose down
+                break;
+            case 'ArrowLeft':
+                yawLeft = true; // Turn left
+                break;
+            case 'ArrowRight':
+                yawRight = true; // Turn right
                 break;
             case 'KeyW':
                 canTakeOff = true; // Increase throttle
@@ -33,7 +39,6 @@ function handleKeyDown(event) {
     }
 }
 
-// Define the `handleKeyUp` function
 function handleKeyUp(event) {
     if (plane) {
         switch (event.code) {
@@ -43,12 +48,19 @@ function handleKeyUp(event) {
             case 'ArrowDown':
                 pitchDown = false; // Stop tilting nose down
                 break;
+            case 'ArrowLeft':
+                yawLeft = false; // Stop turning left
+                break;
+            case 'ArrowRight':
+                yawRight = false; // Stop turning right
+                break;
             case 'KeyW':
                 canTakeOff = false; // Stop throttle increase
                 break;
         }
     }
 }
+
 
 // Define the `onWindowResize` function
 function onWindowResize() {
@@ -127,7 +139,7 @@ function loadPlaneModel() {
             loadedPlane.rotation.y += Math.PI; // Correct direction
 
             plane.add(loadedPlane);
-            plane.position.set(0, 1, 0);
+            //plane.position.set(0, 1, 0);
 
             const axisHelper = new THREE.AxesHelper(5);
             plane.add(axisHelper);
@@ -245,6 +257,14 @@ function animate() {
             } else if (pitchDown) {
                 plane.rotation.x += 0.01; // Tilt nose down
             }
+            
+        	// Apply yaw changes (turn left or right)
+            if (yawLeft) {
+                plane.rotation.y += 0.01; // Turn left
+            } else if (yawRight) {
+                plane.rotation.y -= 0.01; // Turn right
+            }
+
 
             // Camera follow logic
             const relativeCameraOffset = new THREE.Vector3(0, 5, -20);
