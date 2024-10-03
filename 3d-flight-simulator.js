@@ -136,7 +136,7 @@ function loadPlaneModel() {
 
             // Adjust the loaded plane's orientation
             //loadedPlane.rotation.y = Math.PI / 2;
-            //loadedPlane.rotation.y += Math.PI; // Correct direction
+            loadedPlane.rotation.y += 1.5 * Math.PI;
 
             plane.add(loadedPlane);
             plane.position.set(0, 1, 0);
