@@ -1,8 +1,15 @@
+// Declare necessary variables
 let scene, camera, renderer, plane, terrain, runway;
-let speed = 0, altitude = 0;
-let canTakeOff = false, hasTakenOff = false;
-const maxSpeed = 1;
-const takeoffSpeed = 0.2;
+let speed = 0;          // Initial speed of the plane
+let altitude = 1;       // Initial altitude, starting slightly above ground (e.g., on a runway)
+let canTakeOff = false; // Boolean to check if throttle is applied for takeoff
+let hasTakenOff = false; // Boolean to determine if the plane has taken off
+
+const maxSpeed = 1;     // Maximum speed
+const takeoffSpeed = 0.2; // Speed required to take off
+const GRAVITY = 0.005;  // Gravity constant pulling the plane down
+const LIFT_FACTOR = 0.05; // Factor to determine lift based on pitch and speed
+
 
 // Initialize the scene
 init();
@@ -94,57 +101,6 @@ function loadPlaneModel() {
     );
 }
 
-
-//function loadPlaneModel() {
-//    const loader = new THREE.GLTFLoader();
-//    loader.load(
-//        'Assets/Plane/cessna-172.glb',
-//        function (gltf) {
-//            // Create a wrapper object to handle rotation and positioning
-//            const planeWrapper = new THREE.Object3D();
-//            plane = gltf.scene;
-
-            // Add the plane model to the wrapper
-//            planeWrapper.add(plane);
-//
-//            // Position and scale the wrapper to make the plane visible
-//            planeWrapper.position.set(0, 1, 0);
-//            planeWrapper.scale.set(1, 1, 1);
-
-            // Rotate the wrapper to align the plane correctly
-  //          // planeWrapper.rotation.y = Math.PI; // Adjust this value as needed
-//			planeWrapper.rotation.x = -Math.PI / 2;
-//
-            // Add an axes helper to visualize the orientation of the plane
-    //        const axisHelper = new THREE.AxesHelper(5);
-  //          planeWrapper.add(axisHelper);
-//
-            // Ensure plane materials are opaque and visible
-            //plane.traverse(function (child) {
-          //      if (child.isMesh) {
-        //            child.material.transparent = false;
-      //              child.material.opacity = 1;
-    //            }
-  //          });
-//
-    //        // Add the wrapper to the scene
-  //          scene.add(planeWrapper);
-//
-    //        // Assign the wrapper as the main reference for movement and controls
-  //          plane = planeWrapper;
-//
-  //          console.log('Cessna 172 model loaded successfully');
-//        },
-//        undefined,
-//        function (error) {
-//            console.error('An error occurred while loading the model:', error);
-//        }
-//    );
-//}
-
-
-
-
 function createTerrain() {
     const terrainGeometry = new THREE.PlaneGeometry(1000, 1000, 100, 100);
     terrainGeometry.rotateX(-Math.PI / 2);
@@ -205,51 +161,85 @@ function createOnScreenControls() {
     });
 }
 
-function animate() {
+//const GRAVITY = 0.005; // Gravity pulling the plane down
+//const LIFT_FACTOR = 0.05; // Factor to determine lift based on pitch and speed
+
+function animate() {{
     requestAnimationFrame(animate);
 
-    if (plane) {
-        // Thrust: Increase speed with throttle (limited by max speed)
-        if (canTakeOff && speed < maxSpeed) {
-            speed += 0.001; // Gradually increase speed
-        }
+	// Ensure the plane is loaded and defined before running transformations
+    if (plane && plane instanceof THREE.Object3D) {
+    	// Move plane based on user input
+    	if (!hasTakenOff) {
+        	// Thrust: Increase speed with throttle (limited by max speed)
+        	if (canTakeOff && speed < maxSpeed) {
+            	speed += 0.002; // Gradually increase speed
+        	}	
+        
+        	plane.translateZ(speed); // Move forward along the Z-axis (add a - symbol in fornt of speed if plane moves towards camera)
 
-        // Drag: Gradual deceleration if no throttle is applied
-        if (!canTakeOff && speed > 0) {
-            speed -= 0.0005; // Gradually decrease speed when not throttling
-            if (speed < 0) speed = 0; // Ensure speed doesn't go negative
-        }
+			if (speed >= takeoffSpeed) {
+				hasTakenOff = true; // Allow takeoff once speed is sufficient
+			}
+		} else {
+			// Manage speed, ensuring it doesn't exceed maxSpeed
+        	if (canTakeOff && speed < maxSpeed) {
+        		speed += 0.002; // Increase throttle incrementally if W key is held down
+        	}	else if (!canTakeOff && speed > 0) {
+           	 		speed -= 0.0005; // Gradually decrease speed when not throttling
+            		if (speed < 0) speed = 0; // Ensure speed doesn't go negative
+        	}
 
         // Forward Movement: Move in the local -Z direction to go forward
         plane.translateZ(speed); // Negative Z makes the plane move forward in its local space
 
         // Lift: If enough speed is achieved, the plane starts gaining altitude
+        let liftForce = 0;
         if (speed >= takeoffSpeed) {
-            hasTakenOff = true;
+            liftForce = Math.max(Math.sin(plane.rotation.x) * speed * LIFT_FACTOR, 0); // Calculate lift
         }
+        
+        altitude -= GRAVITY; // Apply GRAVITY
+        altitude += liftForce; // Add lift to counteract gravity
 
-        if (hasTakenOff) {
+		// Prevent plane from going below ground level
+		if (altitude < 0.1) {
+			altitude = 0.1; // Keep the plane on the ground if altitude drops
+			if (speed === 0) {
+				hasTakenOff = false; // Plane is grounded if altitude drops and speed is zero
+			}
+		} else {
+			hasTakenOff = true; // Mark as taken off if above ground  level
+		}
+		
+		//
+		plane.position.y = altitude
+
+        //if (hasTakenOff) {
             // Apply lift based on pitch
             const liftForce = Math.sin(plane.rotation.x) * speed * 0.05; // Simplified lift logic
             altitude += liftForce;
             plane.position.y = Math.max(altitude, 0.1); // Ensure the plane stays above the ground
         }
-
+		if (plane) {
         // Camera Follow Logic
-        const relativeCameraOffset = new THREE.Vector3(0, 5, -20);
-        const cameraPosition = plane.localToWorld(relativeCameraOffset.clone());
+        	const relativeCameraOffset = new THREE.Vector3(0, 5, -20);
+        	const cameraPosition = plane.localToWorld(relativeCameraOffset.clone());
 
-        // Set camera position and ensure it looks at the plane
-        camera.position.copy(cameraPosition);
-        camera.lookAt(plane.position);
-
+        	// Set camera position and ensure it looks at the plane
+        	camera.position.copy(cameraPosition);
+        	camera.lookAt(plane.position);
+			}
         // Update UI elements for speed and altitude
         document.getElementById('speed').textContent = speed.toFixed(2);
         document.getElementById('altitude').textContent = plane.position.y.toFixed(2);
+    	}
     }
 
     // Render the scene
-    renderer.render(scene, camera);
+    If (renderer) {
+    	renderer.render(scene, camera);
+    }
 }
 
 
@@ -299,47 +289,14 @@ function handleKeyUp(event) {
     }
 }
 
-
-//function handleKeyDown(event) {
-//    if (plane) {
-//        switch (event.code) {
-//            case 'ArrowUp':
-//                if (hasTakenOff) {
-//                    plane.rotation.x -= 0.02; // Tilt up
-//                }
-//                break;
-//            case 'ArrowDown':
-//                if (hasTakenOff) {
-//                    plane.rotation.x += 0.02; // Tilt down
-//                }
-//                break;
-//            case 'ArrowLeft':
-//                plane.rotation.y += 0.02; // Turn left
-//                break;
-//            case 'ArrowRight':
-//                plane.rotation.y -= 0.02; // Turn right
-//                break;
-//            case 'KeyW':
-//                canTakeOff = true; // Increase throttle
-//                break;
-//            case 'KeyS':
-//                speed -= 0.02; // Decrease throttle
-//                if (speed < 0) speed = 0;
-//                break;
-//        }
-//    }
-//}
-
 function handleKeyUp(event) {
     if (event.code === 'KeyW') {
         canTakeOff = false; // Stop increasing throttle
     }
 }
 
-const GRAVITY = 0.005; // Gravity pulling the plane down
-const LIFT_FACTOR = 0.05; // Factor to determine lift based on pitch and speed
 
-function animate() {
+//function animate() {
     requestAnimationFrame(animate);
 
     if (plane) {
@@ -392,12 +349,12 @@ function animate() {
         camera.lookAt(plane.position);
     }
 
-    if (renderer) {
+//    if (renderer) {
         renderer.render(scene, camera);
     }
 
     // Update UI
-    if (plane) {
+//    if (plane) {
         document.getElementById('speed').textContent = speed.toFixed(2);
         document.getElementById('altitude').textContent = plane.position.y.toFixed(2);
     }
