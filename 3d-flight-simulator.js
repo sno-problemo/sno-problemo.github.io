@@ -84,6 +84,8 @@ function init() {
 
     camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
     camera.position.set(0, 5, -20);
+    // Ensure the camera looks at where the plane will be positioned
+    camera.lookAt(new THREE.Vector3(0, 1, 0));
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(width, height);
@@ -152,6 +154,8 @@ function loadPlaneModel() {
 
 
             scene.add(plane);
+            // Make the camera look at the plane's initial position
+            camera.lookAt(plane.position);
             console.log('Cessna 172 model loaded and oriented successfully');
         },
         undefined,
