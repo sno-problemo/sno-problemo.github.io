@@ -12,6 +12,7 @@ const LIFT_FACTOR = 0.5; // Factor to determine lift based on pitch and speed
 
 let pitchUp = false, pitchDown = false;
 let yawLeft = false, yawRight = false;
+let rollLeft = false, rollRight = false;
 
 function handleKeyDown(event) {
     if (plane) {
@@ -35,6 +36,12 @@ function handleKeyDown(event) {
                 speed -= 0.02; // Decrease throttle
                 if (speed < 0) speed = 0;
                 break;
+            case 'keyA':
+            	rollLeft = true; // Roll left
+            	break;
+            case 'KeyD':
+            	rollRight = true; // Roll right
+            	break;
         }
     }
 }
@@ -57,6 +64,12 @@ function handleKeyUp(event) {
             case 'KeyW':
                 canTakeOff = false; // Stop throttle increase
                 break;
+            case 'keyA':
+            	rollLeft = false; // Stop rolling left
+            	break;
+            case 'KeyD':
+            	rollRight = false; // Stop rolling right
+            	break;
         }
     }
 }
