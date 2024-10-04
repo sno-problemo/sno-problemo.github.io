@@ -8,7 +8,7 @@ let hasTakenOff = false; // Boolean to determine if the plane has taken off
 const maxSpeed = 1;     // Maximum speed
 const takeoffSpeed = 0.2; // Speed required to take off
 const GRAVITY = 0.005;  // Gravity constant pulling the plane down
-const LIFT_FACTOR = 0.05; // Factor to determine lift based on pitch and speed
+const LIFT_FACTOR = 0.5; // Factor to determine lift based on pitch and speed
 
 let pitchUp = false, pitchDown = false;
 let yawLeft = false, yawRight = false;
@@ -132,12 +132,13 @@ function loadPlaneModel() {
             const loadedPlane = gltf.scene;
 
             // Reset rotations
-            loadedPlane.rotation.set(0, 0, 0);
+            //loadedPlane.rotation.set(0, 0, 0);
+            loadedPlane.rotation.set(0, Math.PI + Math.PI / 2, 0);
 
             // Adjust the loaded plane's orientation
             //No adjustments = Plane faces right
-            loadedPlane.rotation.y = -Math.PI / 2; // Plane faces the camera
-            loadedPlane.rotation.y += Math.PI; // Plane faces left
+            // loadedPlane.rotation.y = -Math.PI / 2; // Plane faces the camera
+            // loadedPlane.rotation.y += Math.PI; // Plane faces left
 			//loadedPlane.rotation.y = Math.PI / 2; 
 
             plane.add(loadedPlane);
@@ -176,8 +177,8 @@ function createRunway() {
     const runwayGeometry = new THREE.PlaneGeometry(100, 10);
     const runwayMaterial = new THREE.MeshPhongMaterial({ color: 0x333333 });
     const runwayMesh = new THREE.Mesh(runwayGeometry, runwayMaterial);
-    runwayMesh.rotation.x = -Math.PI / 2;
-    runwayMesh.position.y = 0;
+    //runwayMesh.rotation.x = -Math.PI / 2;
+    //runwayMesh.position.y = 0;
 
     return runwayMesh;
 }
