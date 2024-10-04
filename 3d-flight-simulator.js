@@ -166,7 +166,7 @@ function loadPlaneModel() {
 }
 
 function createTerrain() {
-    const terrainGeometry = new THREE.PlaneGeometry(1000, 1000, 100, 100);
+    const terrainGeometry = new THREE.PlaneGeometry(5000, 5000, 256, 256);
     terrainGeometry.rotateX(-Math.PI / 2);
 
     const textureLoader = new THREE.TextureLoader();
@@ -185,8 +185,8 @@ function createRunway() {
     const runwayGeometry = new THREE.PlaneGeometry(100, 10);
     const runwayMaterial = new THREE.MeshPhongMaterial({ color: 0x333333 });
     const runwayMesh = new THREE.Mesh(runwayGeometry, runwayMaterial);
-    //runwayMesh.rotation.x = -Math.PI / 2;
-    //runwayMesh.position.y = 0;
+    runwayMesh.rotation.x = 0;
+    runwayMesh.position.y = -Math.PI / 2;
 
     return runwayMesh;
 }
