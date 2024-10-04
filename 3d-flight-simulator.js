@@ -144,8 +144,12 @@ function loadPlaneModel() {
             plane.add(loadedPlane);
             plane.position.set(0, 1, 0);
 
-            const axisHelper = new THREE.AxesHelper(5);
+            const axisHelper = new THREE.AxesHelper(10);
             plane.add(axisHelper);
+            
+            const worldAxisHelper = new THREE.AxesHelper(15);
+			scene.add(worldAxisHelper); // Adds a world axis helper to the entire scene to compare orientations
+
 
             scene.add(plane);
             console.log('Cessna 172 model loaded and oriented successfully');
