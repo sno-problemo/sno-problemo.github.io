@@ -182,11 +182,12 @@ function createTerrain() {
 }
 
 function createRunway() {
-    const runwayGeometry = new THREE.PlaneGeometry(100, 10);
+    const runwayGeometry = new THREE.PlaneGeometry(300, 25);
     const runwayMaterial = new THREE.MeshPhongMaterial({ color: 0x333333 });
     const runwayMesh = new THREE.Mesh(runwayGeometry, runwayMaterial);
     runwayMesh.rotation.x = 0;
-    runwayMesh.position.y = -Math.PI / 2;
+    runwayMesh.rotation.y = -Math.PI / 2;
+	runwayMesh.rotation.z = -Math.PI / 2;
 
     return runwayMesh;
 }
