@@ -133,7 +133,7 @@ function loadPlaneModel() {
 
             // Reset rotations
             //loadedPlane.rotation.set(0, 0, 0);
-            loadedPlane.rotation.set(0, Math.PI + Math.PI / 2, 0);
+            loadedPlane.rotation.set(0, Math.PI + -Math.PI / 2, 0);
 
             // Adjust the loaded plane's orientation
             //No adjustments = Plane faces right
