@@ -185,8 +185,8 @@ function createRunway() {
     const runwayGeometry = new THREE.PlaneGeometry(300, 25);
     const runwayMaterial = new THREE.MeshPhongMaterial({ color: 0x333333 });
     const runwayMesh = new THREE.Mesh(runwayGeometry, runwayMaterial);
-    runwayMesh.rotation.x = 0;
-    runwayMesh.rotation.y = -Math.PI / 2;
+    runwayMesh.rotation.x = -Math.PI / 2;
+    runwayMesh.rotation.y = 0;
 	runwayMesh.rotation.z = -Math.PI / 2;
 
     return runwayMesh;
