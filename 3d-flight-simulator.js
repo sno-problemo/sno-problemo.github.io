@@ -297,6 +297,7 @@ function animate() {
     }
 }
 */
+/*
 function animate() {
     requestAnimationFrame(animate);
 
@@ -325,6 +326,89 @@ function animate() {
 
         // Calculate lift based on pitch and speed
         let liftCoefficient = Math.sin(-plane.rotation.x) + 1; // Shift to ensure positive lift
+        let liftForce = liftCoefficient * speed * LIFT_FACTOR;
+
+        // Apply gravity and lift
+        altitude -= GRAVITY;
+        altitude += liftForce;
+
+        // Ensure the plane doesn't go below ground level
+        if (altitude < 0.1) {
+            altitude = 0.1;
+            if (speed === 0) {
+                hasTakenOff = false; // If plane hits the ground and speed is zero, it is grounded
+            }
+        } else {
+            hasTakenOff = true; // Mark as taken off if above ground level
+        }
+
+        // Update the plane's altitude
+        plane.position.y = altitude;
+
+        // Camera follow logic
+        const relativeCameraOffset = new THREE.Vector3(0, 5, -20);
+        const cameraPosition = plane.localToWorld(relativeCameraOffset.clone());
+
+        camera.position.copy(cameraPosition);
+        camera.lookAt(plane.position);
+
+        // Update UI elements for speed and altitude
+        document.getElementById('speed').textContent = speed.toFixed(2);
+        document.getElementById('altitude').textContent = plane.position.y.toFixed(2);
+    }
+
+    // Render the scene
+    if (renderer) {
+        renderer.render(scene, camera);
+    }
+}
+*/
+function animate() {
+    requestAnimationFrame(animate);
+
+    if (plane && plane instanceof THREE.Object3D) {
+        // Adjust speed based on throttle input
+        if (canTakeOff && speed < maxSpeed) {
+            speed += 0.002; // Gradually increase speed
+        } else if (!canTakeOff && speed > 0) {
+            speed -= 0.0005; // Gradually decrease speed when not throttling
+            if (speed < 0) speed = 0;
+        }
+
+        // Move the plane forward along its local axis
+        plane.translateZ(speed);
+
+        // Apply rotations based on user input
+        // Adjust pitch (rotate around local X-axis)
+        if (pitchUp) {
+            plane.rotateX(-0.01); // Tilt nose up
+        }
+        if (pitchDown) {
+            plane.rotateX(0.01); // Tilt nose down
+        }
+
+        // Apply yaw (rotate around local Y-axis)
+        if (yawLeft) {
+            plane.rotateY(0.01); // Turn left
+        }
+        if (yawRight) {
+            plane.rotateY(-0.01); // Turn right
+        }
+
+        // Apply roll (rotate around local Z-axis)
+        if (rollLeft) {
+            plane.rotateZ(0.01); // Roll left
+        }
+        if (rollRight) {
+            plane.rotateZ(-0.01); // Roll right
+        }
+
+        // Optionally adjust heading based on roll angle for banked turns
+        const rollInfluence = 0.005; // Adjust as needed
+        plane.rotateY(Math.sin(plane.rotation.z) * rollInfluence);
+
+        // Calculate lift based on pitch and speed
+        let liftCoefficient = Math.sin(-plane.rotation.x) + 1; // Ensure positive lift
         let liftForce = liftCoefficient * speed * LIFT_FACTOR;
 
         // Apply gravity and lift
