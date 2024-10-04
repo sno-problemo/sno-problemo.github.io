@@ -217,7 +217,7 @@ function createOnScreenControls() {
         if (speed < 0) speed = 0;
     });
 }
-
+/*
 function animate() {
     requestAnimationFrame(animate);
 
@@ -289,6 +289,71 @@ function animate() {
             document.getElementById('speed').textContent = speed.toFixed(2);
             document.getElementById('altitude').textContent = plane.position.y.toFixed(2);
         }
+    }
+
+    // Render the scene
+    if (renderer) {
+        renderer.render(scene, camera);
+    }
+}
+*/
+function animate() {
+    requestAnimationFrame(animate);
+
+    if (plane && plane instanceof THREE.Object3D) {
+        // Existing code for movement and controls...
+
+        // Move the plane forward along its local axis
+        plane.translateZ(speed);
+
+        // Apply rotations based on user input
+        // Adjust pitch (nose up/down)
+        if (pitchUp) {
+            plane.rotation.x -= 0.01; // Tilt nose up
+        }
+        if (pitchDown) {
+            plane.rotation.x += 0.01; // Tilt nose down
+        }
+
+        // Adjust yaw (turn left/right)
+        if (yawLeft) {
+            plane.rotation.y += 0.01; // Turn left
+        }
+        if (yawRight) {
+            plane.rotation.y -= 0.01; // Turn right
+        }
+
+        // Calculate lift based on pitch and speed
+        let liftCoefficient = Math.sin(-plane.rotation.x) + 1; // Shift to ensure positive lift
+        let liftForce = liftCoefficient * speed * LIFT_FACTOR;
+
+        // Apply gravity and lift
+        altitude -= GRAVITY;
+        altitude += liftForce;
+
+        // Ensure the plane doesn't go below ground level
+        if (altitude < 0.1) {
+            altitude = 0.1;
+            if (speed === 0) {
+                hasTakenOff = false; // If plane hits the ground and speed is zero, it is grounded
+            }
+        } else {
+            hasTakenOff = true; // Mark as taken off if above ground level
+        }
+
+        // Update the plane's altitude
+        plane.position.y = altitude;
+
+        // Camera follow logic
+        const relativeCameraOffset = new THREE.Vector3(0, 5, -20);
+        const cameraPosition = plane.localToWorld(relativeCameraOffset.clone());
+
+        camera.position.copy(cameraPosition);
+        camera.lookAt(plane.position);
+
+        // Update UI elements for speed and altitude
+        document.getElementById('speed').textContent = speed.toFixed(2);
+        document.getElementById('altitude').textContent = plane.position.y.toFixed(2);
     }
 
     // Render the scene
