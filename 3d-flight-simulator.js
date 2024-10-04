@@ -7,8 +7,8 @@ let hasTakenOff = false; // Boolean to determine if the plane has taken off
 
 const maxSpeed = 1;     // Maximum speed
 const takeoffSpeed = 0.2; // Speed required to take off
-const GRAVITY = 0.005;  // Gravity constant pulling the plane down
-const LIFT_FACTOR = 0.5; // Factor to determine lift based on pitch and speed
+const GRAVITY = 0.03;  // Gravity constant pulling the plane down
+const LIFT_FACTOR = 0.05; // Factor to determine lift based on pitch and speed
 
 let pitchUp = false, pitchDown = false;
 let yawLeft = false, yawRight = false;
@@ -195,12 +195,13 @@ function createTerrain() {
 }
 
 function createRunway() {
-    const runwayGeometry = new THREE.PlaneGeometry(300, 25);
+    const runwayGeometry = new THREE.PlaneGeometry(500, 25);
     const runwayMaterial = new THREE.MeshPhongMaterial({ color: 0x333333 });
     const runwayMesh = new THREE.Mesh(runwayGeometry, runwayMaterial);
     runwayMesh.rotation.x = -Math.PI / 2;
     runwayMesh.rotation.y = 0;
 	runwayMesh.rotation.z = -Math.PI / 2;
+	runwayMesh.position.set(0,0,-250)
 
     return runwayMesh;
 }
